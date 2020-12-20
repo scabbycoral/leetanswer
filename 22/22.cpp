@@ -8,7 +8,7 @@ public:
 	}
 
 	void dfs(int left, int right, vector<string> &vec, string s) {
-		if (left < 0 || right < 0 || left >  right) {
+		if (left < 0 || right < 0 || left >  right) {  //控制(生成在末尾
 			return;
 		}
 		if (left == 0 && right == 0) {
