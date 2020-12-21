@@ -15,4 +15,6 @@
 13.cpp：有值引用<br>
 14.cpp：binary_search()二分查找<br>
 15.python：bisect.bisect_left()<br>
-16.
+16.c++：next_permutation()求全排列
+17.python：collections.Counter计数器
+20.c++：size_t
