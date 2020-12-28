@@ -15,7 +15,7 @@ public:
         if (mid_target > target) {
             return;
         }
-        for (int i = 0; i < candidates.size(); i++) {
+        for (int i = index; i < candidates.size(); i++) {
             mid_vector.push_back(candidates[i]);
             //mid_target+=candidates[i];
             solve(candidates, mid_target + candidates[i], i, target, mid_vector, result);
