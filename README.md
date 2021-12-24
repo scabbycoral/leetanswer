@@ -5,7 +5,7 @@
 3.python：enumerate用于转化为序列<br>
 4.python：if可判断key是否存在于dict中<br>
 5.c++：std::ios::sync_with_stdio(false);/std::cin.tie(NULL);/std::cout.tie(NULL);用于解绑cin、cout（https://en.cppreference.com/w/cpp/io/cin）<br>
-6.c++：lower_bound、upper_bound<br>
+6.c++：lower_bound、upper_bound。有限状态自动机<br>
 7.python：iter()<br>
 8.python：zip()元组匹配器<br>
 9.c++：std::transform()两种重载<br>
