@@ -3,8 +3,9 @@ class Solution:
         def postorder(root: TreeNode):
             if not root:
                 return
-            postorder(root.left)
             res.append(root.val)
+            postorder(root.left)
+            
             postorder(root.right)
             
         

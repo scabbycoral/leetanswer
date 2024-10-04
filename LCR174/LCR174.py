@@ -11,4 +11,4 @@ class Solution:
         self.cnt = cnt
         dfs(root)
         return self.res
-#230反中序遍历
+#二叉搜索树的中序遍历是从小到大排列，所以需要正向dfs

@@ -10,4 +10,4 @@ class Solution:
             else:
                 pre = pre.next
         return head
-        
+        #可以删除尾节点

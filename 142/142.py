@@ -2,6 +2,8 @@ class Solution(object):
     def detectCycle(self, head):
         fast, slow = head, head
         while True:
+        #while True用来代替do while
+        #结束条件在break的if这里
             if not (fast and fast.next): return
             fast, slow = fast.next.next, slow.next
             if fast == slow: break

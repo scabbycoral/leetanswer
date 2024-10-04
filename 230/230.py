@@ -13,3 +13,4 @@ class Solution:
         self.k = k
         dfs(root)
         return self.res
+#二叉搜索树的中序遍历是从小到大排列，所以需要逆向向dfs

@@ -22,13 +22,14 @@ class Solution:
                 #位置正确且没冲突，继续找下一个
             elif documents[i]==documents[documents[i]]:
                 return documents[i]
-                #位置不正确且冲突返回重复值
+                #位置不正确且要交换的位置保存了同样的值
             else:
                 documents[documents[i]],documents[i]=documents[i],documents[documents[i]]
                 #位置不正确且不冲突则交换位置
         return -1
         """
         
+        """
         #二分法
         #不是将原数组进行二分，而是对里面可能存在的元素进行二分，看哪些元素有重复，每进行一次二分，都用这些元素对整个nums进行判断
         def countRange(nums, length, start, end) -> int:
@@ -43,7 +44,7 @@ class Solution:
 
         start = 1
         end = length - 1
-        #start和end表示的不是位置，是从1到n的数字
+        #start和end表示的不是位置，是从1到n的数字，也可以理解为1-n数字的下标
         while end >= start:
             middle = ((end - start) >> 1) + start
             #当前后指针都是动态时，计算中间位置，这里代表中间位置的数字，因为num大小是从1到n
@@ -61,3 +62,12 @@ class Solution:
             #出现在后半段
                 start = middle + 1
         return -1
+        """
+        
+        #用原表模拟哈希表
+        for num in nums:
+            if nums[abs(num)] < 0:
+                return abs(num)
+            else:
+                nums[abs(num)] = -nums[abs(num)]
+                #给已找到的元素做标注

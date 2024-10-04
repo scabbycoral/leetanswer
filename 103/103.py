@@ -11,6 +11,7 @@ class Solution:
                 if len(res) % 2 == 0: tmp.append(node.val) # 奇数层 -> 插入队列尾部
                 
                 else: tmp.appendleft(node.val) # 偶数层 -> 插入队列头部
+                #不需要更改遍历次序，只需要控制头入尾入
                 
                 
                 if node.left: deque.append(node.left)

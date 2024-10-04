@@ -6,6 +6,7 @@ class Solution:
             board[i][j] = ''
             res = dfs(i + 1, j, k + 1) or dfs(i - 1, j, k + 1) or dfs(i, j + 1, k + 1) or dfs(i, j - 1, k + 1)
             board[i][j] = word[k]
+            #还原，不影响其他路线
             return res
 
         for i in range(len(board)):

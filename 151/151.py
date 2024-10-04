@@ -4,8 +4,8 @@ class Solution:
         i = j = len(message) - 1
         res = []
         while i >= 0:
-            while i >= 0 and message[i] != ' ': i -= 1 # 搜索首个空格
+            while i >= 0 and message[i] != ' ': i -= 1 # 搜索首个空格，i是单词后第一个空格的位置
             res.append(message[i + 1: j + 1])          # 添加单词
-            while i >= 0 and message[i] == ' ': i -= 1 # 跳过单词间空格
+            while i >= 0 and message[i] == ' ': i -= 1 # 跳过单词间空格，i是空格后第一个字母的位置
             j = i                                      # j 指向下个单词的尾字符
         return ' '.join(res)                           # 拼接并返回

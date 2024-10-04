@@ -7,3 +7,4 @@ class Solution:
                 stack.pop()
                 i += 1
         return not stack
+#每次入栈都用所有出栈队列判断，如果有一项不符合，则继续入栈

@@ -1,16 +1,21 @@
 class Solution:
     def maxSlidingWindow(self, nums: List[int], k: int) -> List[int]:
+        if not nums or k == 0: return []
         deque = collections.deque()
-        res, n = [], len(nums)
-        for i, j in zip(range(1 - k, n + 1 - k), range(n)):
-            # 删除 deque 中对应的 nums[i-1]
-            if i > 0 and deque[0] == nums[i - 1]:
-                deque.popleft()
-            # 保持 deque 递减
-            while deque and deque[-1] < nums[j]:
+        # 未形成窗口
+        for i in range(k):
+            while deque and deque[-1] < nums[i]:
                 deque.pop()
-            deque.append(nums[j])
-            # 记录窗口最大值
-            if i >= 0:
-                res.append(deque[0])
+            deque.append(nums[i])
+        res = [deque[0]]
+        # 形成窗口后
+        for i in range(k, len(nums)):
+            if deque[0] == nums[i - k]:
+                deque.popleft()
+            while deque and deque[-1] < nums[i]:
+                deque.pop()
+            deque.append(nums[i])
+            res.append(deque[0])
         return res
+
+#用max判断十分缓慢，建议用双端队列
