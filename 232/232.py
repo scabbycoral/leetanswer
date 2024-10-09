@@ -16,8 +16,8 @@ class MyQueue:
         #如果b非空
         if not self.A: return -1
         #如果a空
-        # 如果b空，a非空，将栈 A 的元素依次移动至栈 B
         while self.A:
+        # 如果b空，a非空，将栈 A 的元素依次移动至栈 B
             self.B.append(self.A.pop())
         return self.B[-1]
 

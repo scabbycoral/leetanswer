@@ -47,7 +47,7 @@ class Solution:
         pre = head
         #pre保存原链表，cur保存复制链表
         while cur.next:
-        #为什么不要从第12位开始而不是前面加入一个虚拟节点，因为加入一个节点会导致pre需要比cur多一轮迭代，循环会提前停止
+        #为什么不要从第12位开始而不是前面加入一个虚拟节点None并从这里开始，因为加入一个节点会导致pre需要比cur多一轮迭代，循环会提前停止
             pre.next = pre.next.next
             cur.next = cur.next.next
             pre = pre.next

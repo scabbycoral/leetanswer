@@ -25,3 +25,5 @@ class Solution:
             fast = fast.next.next
             slow = slow.next
         return slow
+
+#或者存到数组或者字典里，遍历得到结果

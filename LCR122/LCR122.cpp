@@ -36,4 +36,4 @@ public:
     }
 };
 #里面的参数都有其含义，可以通过修改长度或者参数以达到用xxx替换yy的目的
-#如果xxx和yy长度不一样，说明新旧string长度不一样，while循环需要增加判断new和original的大小，比如xx替换y，需要增加&& new>original，和path[indexOfNew--]=''
+#如果xxx和yy长度不一样，说明新旧string长度不一样，while循环需要增加判断new和original的大小，比如xx替换y，需要增加&& new>original为循环条件，和path[indexOfNew--]=''

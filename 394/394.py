@@ -14,7 +14,7 @@ class Solution:
                 res += c
         return res
 
-
+#递归不需要辅助栈，子括号内容直接被返回
 class Solution:
     def decodeString(self, s: str) -> str:
         def dfs(s, i):
@@ -24,9 +24,10 @@ class Solution:
                     multi = multi * 10 + int(s[i])
                 elif s[i] == '[':
                     i, tmp = dfs(s, i + 1)
-                    #tmp是括号内有效字符
+                    #tmp是当前括号内有效字符
                     res += multi * tmp
                     multi = 0
+                    #multi重置是为了让同级括号永远使用初始化的multi
                 elif s[i] == ']':
                     return i, res
                 else:

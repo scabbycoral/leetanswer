@@ -1,3 +1,4 @@
+#LCR123是新解法
 class Solution:
     def reverseList(self, head: ListNode) -> ListNode:
         def recur(cur, pre):
@@ -11,10 +12,13 @@ class Solution:
         
         return recur(head, None)       # 调用递归并返回
 #空间复杂度O(n)
+#从cur指向pre
 
 class Solution:
     def reverseList(self, head: Optional[ListNode]) -> Optional[ListNode]:
         if not head or not head.next:return head
+        #not head.next是说存在末尾节点并到达末尾节点的情况
+        #not head是head空链表的情况，只此一种
         res=self.reverseList(head.next)
         head.next.next=head
         head.next=None

@@ -7,6 +7,7 @@ class Solution:
             for i in range(l, r + 1): res.append(matrix[t][i]) # left to right
             t += 1
             if t > b: break
+            #本题不一定是正方形数组
             for i in range(t, b + 1): res.append(matrix[i][r]) # top to bottom
             r -= 1
             if l > r: break
@@ -19,3 +20,4 @@ class Solution:
         return res
 #将二维数组分割成上下左右四个条形和中间一个方形
 #注意+=，-=是根据数组位置而言的，而不是剪切方向，数组开头是[0][0]，那么执行结束t一定是+=，因为下一组是[1][0]
+#如何检测是从哪个地方break的，看最后一次的遍历方向

@@ -18,3 +18,17 @@ class Solution(object):
             else:
                 i=k+1
         return -1
+        
+#递归
+    def _binary_search(self, nums, target, left, right):
+        if left > right:
+            return -1
+        
+        mid = (left + right) // 2
+        
+        if nums[mid] == target:
+            return mid
+        elif nums[mid] > target:
+            return self._binary_search(nums, target, left, mid - 1)
+        else:
+            return self._binary_search(nums, target, mid + 1, right)

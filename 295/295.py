@@ -1,4 +1,7 @@
-    from heapq import *
+#优先队列
+
+
+from heapq import *
 
 class MedianFinder:
     def __init__(self):

@@ -39,3 +39,21 @@ class Solution:
             l1.next = self.mergeTwoLists(l1.next, l2)
         return l1 or l2
         #把上面的四个if缩减成两个if，因为左面是l1还是l2无所谓，找到需要插入的就交换l1l2
+        
+#可读性优化
+class Solution:
+    def mergeTwoLists(self, list1: Optional[ListNode], list2: Optional[ListNode]) -> Optional[ListNode]:
+        # 如果其中一个链表为 None，返回另一个链表
+        if not list1:
+            return list2
+        if not list2:
+            return list1
+        
+        # 确保 list1 是较小值的节点
+        if list1.val > list2.val:
+            list1, list2 = list2, list1
+        
+        # 递归调用，合并 list1 的下一个节点和 list2
+        list1.next = self.mergeTwoLists(list1.next, list2)
+        
+        return list1  # 返回以 list1 为开头的合并链表

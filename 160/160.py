@@ -10,6 +10,7 @@ class Solution:
         B=headB
         while A!=B:
             A=A.next if A else headB
+            #注意if A说明A到了末尾还会向None走一步
             B=B.next if B else headA
             #位置长度一样，则一直next就能找到
             #如果位置长度不一样，则遍历当前列表结束后换另一个继续遍历

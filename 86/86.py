@@ -1,4 +1,5 @@
 #双指针但全指向头
+#本解法不需要额外空间
 class Solution:
     def partition(self, head: Optional[ListNode], x: int) -> Optional[ListNode]:
         node=ListNode(0)

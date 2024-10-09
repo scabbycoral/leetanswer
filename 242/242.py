@@ -11,3 +11,4 @@ class Solution:
             if val != 0:
                 return False
         return True
+#或者排序后相等
