@@ -280,56 +280,126 @@ class Solution:
         return sorted_less
         
 #堆排序
+#用heapq，或者先放到数组再排序
+#o(nlogn)，递归o(n)，迭代o(1)
 
+#希尔排序
+#不适合链表，因为总有从后往前找的逻辑，
+
+#冒泡排序
 class Solution:
     def sortList(self, head: ListNode) -> ListNode:
         if not head or not head.next:
             return head
 
-        # 将链表转换为数组
-        nums = []
+        # 计算链表长度
+        n = 0
         current = head
         while current:
-            nums.append(current.val)
+            n += 1
             current = current.next
 
-        # 使用堆排序对数组进行排序
-        self.heapSort(nums)
+        # 冒泡排序
+        for i in range(n):
+            swapped = False
+            current = head
+            for j in range(1, n - i):
+                # 比较相邻节点的值
+                if current.val > current.next.val:
+                    # 交换节点的值
+                    current.val, current.next.val = current.next.val, current.val
+                    swapped = True
+                current = current.next
+            #if not swapped:
+                #break
+            #用来检测是否发生交换，如果没有交换说明链表有序，就不用检测后面的了
 
-        # 将排序后的数组转换回链表
-        sorted_head = ListNode(0)  # 虚拟头节点
-        current = sorted_head
-        for num in nums:
-            current.next = ListNode(num)
+        return head
+        
+        
+#计数排序
+
+class Solution:
+    def sortList(self, head: ListNode) -> ListNode:
+        if not head:
+            return head
+
+        # 计算最小值和最大值
+        mini, maxi = float('inf'), float('-inf')
+        current = head
+        while current:
+            mini = min(mini, current.val)
+            maxi = max(maxi, current.val)
             current = current.next
 
-        return sorted_head.next
+        # 创建计数数组
+        count = [0] * (maxi - mini + 1)
 
-    def heapSort(self, nums):
-        n = len(nums)
-        if n <= 1:
-            return
+        # 统计出现次数
+        current = head
+        while current:
+            count[current.val - mini] += 1
+            current = current.next
 
-        # 构建最大堆
-        for i in range(n // 2 - 1, -1, -1):
-            self.adjustHeap(nums, i, n)
+        # 创建虚拟头节点用于构建排序后的链表
+        dummy = ListNode(0)
+        current = dummy
 
-        # 循环将堆首位（最大值）与末位交换，然后重新调整最大堆
-        for i in range(n - 1, 0, -1):
-            nums[0], nums[i] = nums[i], nums[0]
-            self.adjustHeap(nums, 0, i)
+        # 根据计数数组重建链表
+        for i in range(len(count)):
+            while count[i] > 0:
+                current.next = ListNode(i + mini)
+                current = current.next
+                count[i] -= 1
 
-    def adjustHeap(self, array, i, n):
-        maxIndex = i
-        left = 2 * i + 1
-        right = 2 * i + 2
+        return dummy.next
 
-        if left < n and array[left] > array[maxIndex]:
-            maxIndex = left
-        if right < n and array[right] > array[maxIndex]:
-            maxIndex = right
 
-        if maxIndex != i:
-            array[i], array[maxIndex] = array[maxIndex], array[i]
-            self.adjustHeap(array, maxIndex, n)
-#o(nlogn)，递归o(n)，迭代o(1)
+#基数排序
+
+#桶排序
+
+class Solution:
+    def sortList(self, head):
+        if not head or not head.next:
+            return head
+
+        # 找到最大值和最小值
+        max_val = float('-inf')
+        min_val = float('inf')
+        current = head
+
+        while current:
+            max_val = max(max_val, current.val)
+            min_val = min(min_val, current.val)
+            current = current.next
+
+        # 计算桶的数量
+        bucket_size = 10
+        bucket_count = (max_val - min_val) // bucket_size + 1
+        bucket_arr = [[] for _ in range(bucket_count)]
+
+        # 将元素分配到桶中
+        current = head
+        while current:
+            bucket_index = (current.val - min_val) // bucket_size
+            bucket_arr[bucket_index].append(current.val)
+            current = current.next
+
+        # 对每个桶进行排序并合并
+        result_head = None
+        result_tail = None
+
+        for bucket in bucket_arr:
+            if bucket:  # 检查桶是否非空
+                bucket.sort()  # 使用内置排序
+                for value in bucket:
+                    new_node = ListNode(value)
+                    if result_head is None:
+                        result_head = new_node
+                        result_tail = new_node
+                    else:
+                        result_tail.next = new_node
+                        result_tail = new_node
+
+        return result_head

@@ -202,7 +202,7 @@ class Solution:
 平均情况：T(n) = O(nlogn)"""
 
 #希尔排序
-#插入排序的改进
+#不适合链表，因为总有从后往前找的逻辑，需要直接找到
 class Solution:
     def sortArray(self, nums):
         length = len(nums)
@@ -257,3 +257,170 @@ class Solution:
 """最佳情况：T(n) = O(nlog2 n)
 最坏情况：T(n) = O(nlog2 n)
 平均情况：T(n) =O(nlog2n)"""
+
+
+#冒泡排序
+class Solution:
+    def sortArray(self, nums: List[int]) -> List[int]:
+        n = len(nums)
+        # 进行多次循环
+        for i in range(n):
+            #遍历所有元素
+            for j in range(1, n - i):
+                #从i开始，两两相邻元素进行比较排序
+                #n-i是因为后面的i个元素是每一轮能找到的最大小元素，是已排序部分
+                if nums[j - 1] > nums[j]:
+                    nums[j - 1], nums[j] = nums[j], nums[j - 1]
+        return nums
+"""最佳情况：T(n) = O(n)
+最差情况：T(n) = O(n2)
+平均情况：T(n) = O(n2)"""
+
+
+#计数排序
+
+class Solution:
+
+    def sortArray(self, nums):
+        mini,maxi=min(nums),max(nums)
+        count = [0] * (maxi-mini+1)
+        
+        #统计出现次数
+        #为了减少冗余元素，将最小元素看作第1个
+        for num in nums:
+            count[num - mini] += 1
+            
+        #将统计次数更换为某字符出现的第一个位置，下一个字符出现的位置之前全是前一个相同的字符
+        for i in range(1, (maxi-mini)+1):
+            count[i] += count[i - 1]
+        temp = nums.copy()
+        #print(count)
+
+        for i in range(len(nums) - 1, -1, -1):
+            index = count[temp[i] - mini] - 1
+            nums[index] = temp[i]
+            count[temp[i] - mini] -= 1
+            
+        return nums
+"""
+当输入的元素是n 个0到k之间的整数时，它的运行时间是 O(n + k)。计数排序不是比较排序，排序
+的速度快于任何比较排序算法。由于用来计数的数组C的长度取决于待排序数组中数据的范围
+（等于待排序数组的最大值与最小值的差加上1），这使得
+计数排序对于数据范围很大的数组，需要大量时间和内存。
+
+最佳情况：T(n) = O(n+k)
+最差情况：T(n) = O(n+k)
+平均情况：T(n) = O(n+k)
+"""
+
+#基数排序
+class Solution:
+    def sortArray(self, nums):
+        if not nums:
+            return nums
+
+        # 找到最小值和最大值
+        min_val = min(nums)
+        max_val = max(nums)
+
+        # 计算值的范围
+        range_size = max_val - min_val + 1
+        nums = [num - min_val for num in nums]  # 使所有数 >= 0
+        print(nums)
+        # 计算最大位数
+        max_len = self.getMaxLen(max_val - min_val)
+
+        count = [0] * 10
+        temp = [0] * len(nums)
+
+        divisor = 1
+        #表示当前处理位数
+        print(nums)
+        for _ in range(max_len):
+            self.countingSort(nums, temp, divisor, count)
+            nums, temp = temp, nums  # 交换引用
+            divisor *= 10
+            print(nums)
+
+        return [num + min_val for num in nums]  # 恢复原始值
+
+    def countingSort(self, nums, res, divisor, count):
+        # 1. 计算计数数组，计算第divisor位
+        for num in nums:
+            remainder = (num // divisor) % 10
+            count[remainder] += 1
+        # 2. 变成位置数组
+        for i in range(1, 10):
+            count[i] += count[i - 1]
+
+        # 3. 从后向前赋值
+        for i in range(len(nums) - 1, -1, -1):
+            remainder = (nums[i] // divisor) % 10
+            index = count[remainder] - 1
+            res[index] = nums[i]
+            count[remainder] -= 1
+
+        # 4. 重置计数数组
+        count[:] = [0] * 10
+
+    def getMaxLen(self, num):
+        max_len = 0
+        while num > 0:
+            num //= 10
+            max_len += 1
+        return max_len
+"""
+最佳情况：T(n) = O(n * k)
+最差情况：T(n) = O(n * k)
+平均情况：T(n) = O(n * k)
+
+MSD 从高位开始进行排序
+LSD 从低位开始进行排序
+"""
+
+#桶排序
+#避免使用递归，由于桶个数，max函数会导致递归层数超过1000
+class Solution:
+    def sortArray(self, nums):
+        array = nums
+        bucket_size = 10
+        
+        if array is None or len(array) < 2:
+            return array
+
+        # 找到最大值和最小值
+        max_val = max(array)
+        min_val = min(array)
+
+        # 计算桶的数量
+        bucket_count = (max_val - min_val) // bucket_size + 1
+        bucket_arr = [[] for _ in range(bucket_count)]
+        result_arr = []
+
+        # 将元素分配到桶中
+        for num in array:
+            bucket_index = (num - min_val) // bucket_size
+            bucket_arr[bucket_index].append(num)
+
+        # 对每个桶进行插入排序并合并
+        for bucket in bucket_arr:
+            if bucket:  # 检查桶是否非空
+                self.insertionSort(bucket)
+                result_arr.extend(bucket)
+
+        return result_arr
+
+    def insertionSort(self, arr):
+        for i in range(1, len(arr)):
+            temp = arr[i]
+            j = i - 1
+            while j >= 0 and arr[j] > temp:
+                arr[j + 1] = arr[j]
+                j -= 1
+            arr[j + 1] = temp
+"""
+桶排序最好情况下使用线性时间O(n)，桶排序的时间复杂度，取决与对各个桶之间数据进行排序的时间复杂度，因为其它部分的时间复杂度都为O(n)。很显然，桶划分的越小，各个桶之间的数据越少，排序所用的时间也会越少。但相应的空间消耗就会增大。
+最佳情况：T(n) = O(n+k)
+最差情况：T(n) = O(n+k)
+平均情况：T(n) = O(n2)
+"""
