@@ -7,15 +7,18 @@ class Solution:
         for j in range(len(s)):
             if s[j] in dic:
                 i=max(dic[s[j]],i)
-                #i是前一个元素的上一个相同项的位置，dic是当前元素的上一个相同项的位置
+                #括号里的i是前一个存在相同项的元素的上一个出现位置，dic是当前发现的相同项的元素的上一个出现位置
+                #左面的i和dic[s[j]]的意义一样
                 #max避免重复元素之间也有重复元素，使得左指针左移，比如abba，j到达第二个a时，i会从第一个b到第一个a
+                
+                #如果找到重复项，i从上一个位置变成当前相同项的前一个，更新dic储存当前相同项的另一个
                 
             dic[s[j]]=j#入和改的操作都是这个
             #更新当前相同项的哈希表
             res=max(res,j-i)
             #因为结尾处不一定有相同字母，所以每次都要计算
         return res
-        
+
 #动态规划
 class Solution:
     def lengthOfLongestSubstring(self, s: str) -> int:

@@ -13,13 +13,14 @@ class Solution:
         #创建新链表
 
 
-#递归
+#原址修改，递归
 class Solution:
     def mergeTwoLists(self, list1: Optional[ListNode], list2: Optional[ListNode]) -> Optional[ListNode]:
         if list1 not None:
             return list2
         elif list2 not None:
             return list1
+        #链表插入时到队尾和代码结束时链表被取空返回，都在这里return
         elif list2.val>list1.val:
             list1.next=mergeTwoLists(list1.next,list2)
             return list1
@@ -31,7 +32,7 @@ class Solution:
             
         
         
-        
+#原址修改，交换法
 class Solution:
     def mergeTwoLists(self, l1: ListNode, l2: ListNode) -> ListNode:
         if l1 and l2:

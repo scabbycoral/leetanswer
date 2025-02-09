@@ -1,0 +1,1 @@
+string.substr(head,length)

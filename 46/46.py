@@ -5,10 +5,11 @@ class Solution:
                 res.append(list(nums))   # 添加排列方案
                 return
             for i in range(x, len(nums)):
-                nums[i], nums[x] = nums[x], nums[i]  # 交换，将 nums[i] 固定在第 x 位
-                #固定x位，x位和其他位依次交换
-                dfs(x + 1)                           # 开启固定第 x + 1 位元素
-                nums[i], nums[x] = nums[x], nums[i]  # 恢复交换
+                nums[i], nums[x] = nums[x], nums[i]
+                dfs(x + 1)
+                nums[i], nums[x] = nums[x], nums[i]
+                #从0开始，从前往后，用x和后面的元素依次交换
+                #x依次递增，x递增时，x前面的元素固定
         res = []
         dfs(0)
         return res

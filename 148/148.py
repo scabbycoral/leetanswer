@@ -1,5 +1,6 @@
 #插入排序
 #因为本题的第一个节点就有可能被移动，所以返回head没有意义，head有可能已经成为别的节点，需要一个虚拟节点在函数一开始就指向head
+#答案和head是连接的
 class Solution:
     def insertionSortList(self, head: Optional[ListNode]) -> Optional[ListNode]:
         res=ListNode(-1)
@@ -15,13 +16,15 @@ class Solution:
             key.next=pre.next
             pre.next=key
             #2.合适位置插入，pre.next
-            #res初始时后面是没有节点的，通过pre.next不断连接转移的节点
+            #res初始时后面是没有节点的，通过pre.next不断连接需要转移的节点
             key=tmp
+            #这里没有把tmp连上，因为在这个算法中，前面是一段连着的，后面是另一段连着的，从后一段依次取到前一段
             #1.2将取出key位置的空缺连上
         return res.next
 #时间复杂度o(n2)，空间复杂度o(1)
 
 #归并排序递归，自上而下
+#分治法
 #通过快慢指针找中点
 #时间复杂度o(nlogn)，空间复杂度o(n)
 class Solution:
@@ -151,6 +154,7 @@ class Solution:
 
 
 #选择排序
+#答案不连接
 class Solution:
     def sortList(self, head: Optional[ListNode]) -> Optional[ListNode]:
         if not head:
@@ -163,8 +167,10 @@ class Solution:
             # 找到最小节点
             min_cur = head
             min_pre = None
+            #min描述mini节点
             prev = head
             #prev指向后未排序部分
+            #head整体都是未排序，所以prev指向head
             while prev.next:
                 if prev.next.val < min_cur.val:
                     min_cur = prev.next
@@ -179,7 +185,7 @@ class Solution:
             
             # 将最小节点添加到已排序链表
             last_sorted.next = min_cur
-            last_sorted = min_cur
+            last_sorted = last_sorted.next
             last_sorted.next = None  # 断开最小节点的next指针
 
         return sorted_head.next  # 返回已排序链表的头节点
@@ -279,6 +285,29 @@ class Solution:
         tail.next = sorted_greater  # 连接两个链表
         return sorted_less
         
+#冒泡排序
+class Solution:
+    def sortList(self, head: Optional[ListNode]) -> Optional[ListNode]:
+        if not head or not head.next:
+            return head
+
+        swapped = True
+        while swapped:
+            swapped = False
+            prev = None
+            current = head
+
+            while current.next:
+                if current.val > current.next.val:
+                    # 交换节点值
+                    current.val, current.next.val = current.next.val, current.val
+                    swapped = True
+                prev = current
+                current = current.next
+
+        return head
+        
+        
 #堆排序
 #用heapq，或者先放到数组再排序
 #o(nlogn)，递归o(n)，迭代o(1)
@@ -286,35 +315,7 @@ class Solution:
 #希尔排序
 #不适合链表，因为总有从后往前找的逻辑，
 
-#冒泡排序
-class Solution:
-    def sortList(self, head: ListNode) -> ListNode:
-        if not head or not head.next:
-            return head
 
-        # 计算链表长度
-        n = 0
-        current = head
-        while current:
-            n += 1
-            current = current.next
-
-        # 冒泡排序
-        for i in range(n):
-            swapped = False
-            current = head
-            for j in range(1, n - i):
-                # 比较相邻节点的值
-                if current.val > current.next.val:
-                    # 交换节点的值
-                    current.val, current.next.val = current.next.val, current.val
-                    swapped = True
-                current = current.next
-            #if not swapped:
-                #break
-            #用来检测是否发生交换，如果没有交换说明链表有序，就不用检测后面的了
-
-        return head
         
         
 #计数排序

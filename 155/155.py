@@ -11,6 +11,7 @@ class MinStack:
             self.min_stack.append(x)
     def pop(self) -> None:
         if self.stack.pop() == self.min_stack[-1]:
+        #如果栈顶元素等于最小栈最后一个元素，说明栈右侧所有元素都大于栈顶元素，所以最小站中只有一个元素
             self.min_stack.pop()
     def top(self) -> int:
         return self.stack[-1]
