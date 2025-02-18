@@ -155,6 +155,7 @@ class Solution:
 
 #选择排序
 #答案不连接
+#所以每次从head开始找的意思是，从未排序数组开始找
 class Solution:
     def sortList(self, head: Optional[ListNode]) -> Optional[ListNode]:
         if not head:
@@ -285,6 +286,55 @@ class Solution:
         tail.next = sorted_greater  # 连接两个链表
         return sorted_less
         
+#模板
+def partition(head, end):
+    """
+    链表分区函数
+    :param head: 链表的头节点
+    :param end: 链表的尾节点（不包含在分区中）
+    :return: 分区后的链表头节点、基准节点、大于基准值的链表头节点
+    """
+    pivot = head  # 选择头节点作为基准节点
+    smaller_dummy = ListNode(0)  # 小于等于基准值的链表的虚拟头节点
+    larger_dummy = ListNode(0)   # 大于基准值的链表的虚拟头节点
+    smaller = smaller_dummy
+    larger = larger_dummy
+
+    curr = head.next  # 从基准节点的下一个节点开始遍历
+    while curr != end:
+        if curr.val <= pivot.val:
+            smaller.next = curr
+            smaller = smaller.next
+        else:
+            larger.next = curr
+            larger = larger.next
+        curr = curr.next
+
+    # 将 smaller、pivot 和 larger 连接起来
+    smaller.next = pivot
+    pivot.next = larger.next
+    larger.next = None
+
+    return smaller_dummy.next, pivot, larger_dummy.next
+    
+def quick_sort_linked_list(head, end):
+    """
+    链表的快速排序
+    :param head: 链表的头节点
+    :param end: 链表的尾节点（不包含在排序中）
+    :return: 排序后的链表头节点
+    """
+    if head != end:  # 如果链表不为空
+        # 分区
+        smaller_head, pivot, larger_head = partition(head, end)
+        # 递归排序 smaller 和 larger 部分
+        smaller_head = quick_sort_linked_list(smaller_head, pivot)
+        larger_head = quick_sort_linked_list(larger_head, end)
+        # 将 smaller、pivot 和 larger 连接起来
+        pivot.next = larger_head
+        return smaller_head
+    return head
+    
 #冒泡排序
 class Solution:
     def sortList(self, head: Optional[ListNode]) -> Optional[ListNode]:

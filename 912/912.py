@@ -55,6 +55,7 @@ class Solution:
         # 递归排序左半部分和右半部分
         left = self.sortArray(nums[:mid])
         right = self.sortArray(nums[mid:])
+        #切片是左闭右开的，左边包含mid，右边包含mid-1
         
         # 合并已排序的两部分
         return self.merge(left, right)
@@ -108,67 +109,11 @@ class Solution:
 平均情况：T(n) = O(n2)"""
 
 
-#快速排序
-class Solution:
-    def sortArray(self, nums: List[int]) -> List[int]:
-        def partition(arr, low, high):
-            pivot_idx = random.randint(low, high)                   # 随机选择pivot
-            arr[low], arr[pivot_idx] = arr[pivot_idx], arr[low]     # pivot放置到最左边
-            pivot = arr[low]                                        # 选取最左边为pivot
-            #不随机就可以直接选最左或者最右元素，随机就选择之后放到最左最右
-            left, right = low, high     # 双指针
-            while left < right:
-                while left<right and arr[right] >= pivot:          # 找到右边第一个<pivot的元素
-                    right -= 1
-                arr[left] = arr[right]                             # 并将其移动到left处
-                while left<right and arr[left] <= pivot:           # 找到左边第一个>pivot的元素
-                    left += 1
-                arr[right] = arr[left]                             # 并将其移动到right处
-            arr[left] = pivot           # pivot放置到中间left=right处
-            return left
-        def quickSort(arr, low, high):
-            if low < high:
-                mid = partition(arr, low, high)     # 以mid为分割点
-                quickSort(arr, low, mid-1)          # 递归对mid两侧元素进行排序
-                quickSort(arr, mid+1, high)
-        quickSort(nums, 0, len(nums)-1)         # 调用快排函数对nums进行排序
-        return nums
-#o(nlogn)，o(logn)
-#单指针法：for i容易造成递归树倾斜
-#找到比key小的移到左边，然后把key放到小于部分最后一个
-for (int i = left + 1; i <= right; i++) {
-    if (nums[i] < pivot) {
-        lt++;
-        swap(nums, i, lt);
-    }
-}
-swap(nums, left, lt);
-#双指针法：right、left避免倾斜
-#左右同时进行，key放在已排序最后一个
-#三指针法：将等于key的部分单独用i控制
-#lr是左右边界，lt和gt是小于部分和大于部分的右左边界
-int lt = left;
-int gt = right + 1;
-int i = left + 1;
-while (i < gt) {
-    if (nums[i] < pivot) {
-        lt++;
-        swap(nums, i, lt);
-        i++;
-    } else if (nums[i] == pivot) {
-        i++;
-    } else {
-        gt--;
-        swap(nums, i, gt);
-    }
-}
-swap(nums, left, lt);
-"""最佳情况：T(n) = O(nlogn)
-最差情况：T(n) = O(n2)
-平均情况：T(n) = O(nlogn)"""
+
 
 
 #堆排序
+#堆是一个完全二叉树，除了最底层，其余层全满
 #顺序用大顶堆，逆序用小顶堆
 #最小优先队列是小顶堆，最大优先队列是大顶堆
 class MaxHeap:
@@ -251,7 +196,7 @@ print(f"Extracted max: {heap.extract_max()}")  # Output: Extracted max: 15
 heap.display()  # Output: [10, 5, 3, 4, 1]
 
 
-class MaxHeap:
+class MiniHeap:
     def __init__(self):
         self.heap = []
 
@@ -265,6 +210,7 @@ class MaxHeap:
         return 2 * i + 2
 
     def heapify(self, i, n):
+    #找左右子树中的最大值
         largest = i
         left = self.left_child(i)
         right = self.right_child(i)
@@ -319,16 +265,149 @@ class MaxHeap:
         return arr
 
 # Example usage:
-heap = MaxHeap()
+heap = MiniHeap()
 arr = [4, 10, 3, 5, 1]
 print("Original array:", arr)
 
 sorted_arr = heap.heap_sort(arr)
 print("Sorted array:", sorted_arr)
 
+
+def sortArray(self, nums: List[int]) -> List[int]:
+    res=[]
+    heapq.heapify(nums)
+    while nums:
+        res.append(heapq.heappop(nums))
+    return res
+    
+#可变对象不需要返回值
+class Solution:
+    def heapify(self,nums, n, i):
+            largest = i  # 假设当前节点是最大值
+            left = 2 * i + 1  # 左子节点
+            right = 2 * i + 2  # 右子节点
+
+            # 找到左子节点和右子节点中的最大值
+            if left < n and nums[left] > nums[largest]:
+                largest = left
+            if right < n and nums[right] > nums[largest]:
+                largest = right
+
+            # 如果最大值不是当前节点，交换并递归调整
+            if largest != i:
+                nums[i], nums[largest] = nums[largest], nums[i]
+                self.heapify(nums, n, largest)
+
+    def sortArray(self, nums: List[int]) -> List[int]:
+        n = len(nums)
+
+        # 构建最大堆
+        # 从最后一个非叶子节点开始，依次调整
+        for i in range(n // 2 - 1, -1, -1):#到-1表示可以取到0
+            self.heapify(nums, n, i)
+
+        # 排序
+        # 依次将堆顶元素（最大值）与堆的最后一个元素交换，并调整剩余部分为最大堆
+        for i in range(n - 1, 0, -1):#到0表示可以取到1
+            nums[0], nums[i] = nums[i], nums[0]  # 交换堆顶元素和当前末尾元素
+            self.heapify(nums, i, 0)  # 调整剩余部分为最大堆
+
+        return nums
+
 """最佳情况：T(n) = O(nlogn)
 最差情况：T(n) = O(nlogn)
 平均情况：T(n) = O(nlogn)"""
+
+
+#快速排序
+import random
+from typing import List
+
+class Solution:
+    def sortArray(self, nums: List[int]) -> List[int]:
+        def partition(arr, low, high):
+            # 随机选择基准元素并交换到最右边
+            pivot_idx = random.randint(low, high)
+            arr[pivot_idx], arr[high] = arr[high], arr[pivot_idx]
+            pivot = arr[high]
+            i = low - 1  # 小于等于基准元素的区域的末尾
+
+            for j in range(low, high):
+                if arr[j] <= pivot:
+                    i += 1
+                    arr[i], arr[j] = arr[j], arr[i]  # 将小于等于基准的元素交换到左侧
+
+            # 将基准元素放到正确的位置，所有小于他的元素的右端
+            arr[i + 1], arr[high] = arr[high], arr[i + 1]
+            return i + 1
+
+        def quickSort(arr, low, high):
+            if low < high:
+                mid = partition(arr, low, high)  # 以mid为分割点
+                quickSort(arr, low, mid - 1)      # 递归对左半部分排序
+                quickSort(arr, mid + 1, high)     # 递归对右半部分排序
+
+        quickSort(nums, 0, len(nums) - 1)  # 调用快排函数对nums进行排序
+        return nums
+#o(nlogn)，o(logn)
+#单指针法：for i容易造成递归树倾斜
+#找到比key小的移到左边，然后把key放到小部分最后一个
+for (int i = left + 1; i <= right; i++) {
+    if (nums[i] < pivot) {
+        lt++;
+        swap(nums, i, lt);
+    }
+}
+swap(nums, left, lt);
+#双指针法：right、left避免倾斜
+#左右同时进行，key放在已排序最后一个
+#三指针法：将等于key的部分单独用i控制
+#lr是左右边界，lt和gt是小于部分和大于部分的右左边界
+int lt = left;
+int gt = right + 1;
+int i = left + 1;
+while (i < gt) {
+    if (nums[i] < pivot) {
+        lt++;
+        swap(nums, i, lt);
+        i++;
+    } else if (nums[i] == pivot) {
+        i++;
+    } else {
+        gt--;
+        swap(nums, i, gt);
+    }
+}
+swap(nums, left, lt);
+
+#更好理解
+class Solution:
+    def sortArray(self, nums: List[int]) -> List[int]:
+        def part(nums,l,r):
+            key=random.randint(l,r)
+            nums[r],nums[key]=nums[key],nums[r]
+            index=nums[r]
+            i=l
+            for j in range(l,r):
+                if nums[j]<=index:
+                    nums[i],nums[j]=nums[j],nums[i]
+                    i+=1
+            nums[r],nums[i]=nums[i],nums[r]
+            return i
+                     
+
+        def quick(nums,l,r):
+            if l<r:
+                mid=part(nums,l,r)
+                quick(nums,l,mid-1)
+                quick(nums,mid+1,r)
+        quick(nums,0,len(nums)-1)
+        return nums
+        #为什么要传lr进去，因为传lr的同时可以传nums进去，利用可变类型的特性，否则传入切片会创建新的变量
+"""最佳情况：T(n) = O(nlogn)
+最差情况：T(n) = O(n2)
+平均情况：T(n) = O(nlogn)"""
+
 
 #希尔排序
 #不适合链表，因为总有从后往前找的逻辑，需要直接找到
@@ -344,7 +423,7 @@ class Solution:
                 pre_index = i - gap
                 #temp是当前元素，pre是对应的上一组元素
 
-                #插入排序
+                #插入排序是挨着的都比较，希尔排序是只针对gap距离前的元素比较，每gap取到的元素划为一个组，只对组内元素排序
                 while pre_index >= 0 and nums[pre_index] > temp:
                     nums[pre_index + gap] = nums[pre_index]  # 移动元素
                     pre_index -= gap
@@ -383,6 +462,37 @@ class Solution:
 [0, 1, 2, 3, 4, 5, 6, 7, 9, 8]
 [0, 1, 2, 3, 4, 5, 6, 7, 9, 8]
 [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
+
+#更好理解
+def shell_sort(arr):
+    """
+    希尔排序
+    :param arr: 待排序的数组
+    :return: 排序后的数组
+    """
+    n = len(arr)
+    gap = n // 2  # 初始增量
+
+    while gap > 0:
+        # 对每个子序列进行插入排序
+        for i in range(gap, n):#每一个for循环都让一组gap进行排序
+        #从前往后比
+            temp = arr[i]  # 当前需要插入的元素
+            j = i
+            # 将比 temp 大的元素向后移动
+            while j >= gap and arr[j - gap] > temp:
+                arr[j] = arr[j - gap]
+                j -= gap
+            arr[j] = temp  # 插入 temp 到正确位置
+        gap //= 2  # 缩小增量
+
+    return arr
+
+# 示例
+arr = [12, 34, 54, 2, 3]
+print("排序前的数组:", arr)
+sorted_arr = shell_sort(arr)
+print("排序后的数组:", sorted_arr)
 """最佳情况：T(n) = O(nlog2 n)
 最坏情况：T(n) = O(nlog2 n)
 平均情况：T(n) =O(nlog2n)"""
@@ -392,30 +502,33 @@ class Solution:
 
 
 #计数排序
-
 class Solution:
-
-    def sortArray(self, nums):
-        mini,maxi=min(nums),max(nums)
-        count = [0] * (maxi-mini+1)
+    def sortArray(self, nums: List[int]) -> List[int]:
+        count=[0]*(max(nums)-min(nums)+1)
+        mini=min(nums)
+        nums=[i-mini for i in nums]
+        for i in range(len(nums)):
+            count[nums[i]]+=1
+        for i in range(1,len(count)):
+            count[i]+=count[i-1]
+        res=[0]*len(nums)
+        for i in range(len(nums)):
+            res[count[nums[i]]-1]=nums[i]
+            count[nums[i]]-=1
+        res=[i+mini for i in res]
+        return res
         
-        #统计出现次数
-        #为了减少冗余元素，将最小元素看作第1个
-        for num in nums:
-            count[num - mini] += 1
-            
-        #将统计次数更换为某字符出现的第一个位置，下一个字符出现的位置之前全是前一个相同的字符
-        for i in range(1, (maxi-mini)+1):
-            count[i] += count[i - 1]
-        temp = nums.copy()
-        #print(count)
-
-        for i in range(len(nums) - 1, -1, -1):
-            index = count[temp[i] - mini] - 1
-            nums[index] = temp[i]
-            count[temp[i] - mini] -= 1
-            
-        return nums
+class Solution:
+    def sortArray(self, nums: List[int]) -> List[int]:
+        count=[0]*(max(nums)-min(nums)+1)
+        res=[]
+        for i in nums:
+            count[i-min(nums)]+=1
+        print(count)
+        for i in range(len(count)):
+            if count[i]!=0:
+                res.extend(count[i]*[i+min(nums)])
+        return res
 """
 当输入的元素是n 个0到k之间的整数时，它的运行时间是 O(n + k)。计数排序不是比较排序，排序
 的速度快于任何比较排序算法。由于用来计数的数组C的长度取决于待排序数组中数据的范围
@@ -427,7 +540,7 @@ class Solution:
 平均情况：T(n) = O(n+k)
 """
 
-#基数排序
+#基数排序    
 class Solution:
     def sortArray(self, nums):
         if not nums:
@@ -437,44 +550,43 @@ class Solution:
         min_val = min(nums)
         max_val = max(nums)
 
-        # 计算值的范围
-        range_size = max_val - min_val + 1
-        nums = [num - min_val for num in nums]  # 使所有数 >= 0
-        print(nums)
+        # 调整数组中的元素为非负数
+        nums = [num - min_val for num in nums]
+
         # 计算最大位数
         max_len = self.getMaxLen(max_val - min_val)
 
-        count = [0] * 10
-        temp = [0] * len(nums)
+        # 基数排序
+        count = [0] * 10  # 计数数组
+        temp = [0] * len(nums)  # 临时数组
+        divisor = 1  # 当前处理的位数
 
-        divisor = 1
-        #表示当前处理位数
-        print(nums)
         for _ in range(max_len):
             self.countingSort(nums, temp, divisor, count)
             nums, temp = temp, nums  # 交换引用
             divisor *= 10
-            print(nums)
 
-        return [num + min_val for num in nums]  # 恢复原始值
+        # 恢复原始值
+        return [num + min_val for num in nums]
 
     def countingSort(self, nums, res, divisor, count):
-        # 1. 计算计数数组，计算第divisor位
+        # 统计当前位的数字出现次数
         for num in nums:
             remainder = (num // divisor) % 10
             count[remainder] += 1
-        # 2. 变成位置数组
+
+        # 将计数数组转换为前缀和数组
         for i in range(1, 10):
             count[i] += count[i - 1]
 
-        # 3. 从后向前赋值
+        # 从后向前遍历数组，确保排序的稳定性
         for i in range(len(nums) - 1, -1, -1):
             remainder = (nums[i] // divisor) % 10
             index = count[remainder] - 1
             res[index] = nums[i]
             count[remainder] -= 1
 
-        # 4. 重置计数数组
+        # 重置计数数组
         count[:] = [0] * 10
 
     def getMaxLen(self, num):
@@ -483,6 +595,8 @@ class Solution:
             num //= 10
             max_len += 1
         return max_len
+
+
 """
 最佳情况：T(n) = O(n * k)
 最差情况：T(n) = O(n * k)
@@ -494,6 +608,7 @@ LSD 从低位开始进行排序
 
 #桶排序
 #避免使用递归，由于桶个数，max函数会导致递归层数超过1000
+#需要额外空间创建桶，无法原址交换
 class Solution:
     def sortArray(self, nums):
         array = nums
@@ -532,6 +647,46 @@ class Solution:
                 arr[j + 1] = arr[j]
                 j -= 1
             arr[j + 1] = temp
+            
+#可以对任意范围数字排序
+def bucket_sort(arr):
+    """
+    桶排序（支持任意范围）
+    :param arr: 待排序的数组
+    :return: 排序后的数组
+    """
+    n = len(arr)
+    if n <= 1:
+        return arr
+
+    # 计算元素的最小值和最大值
+    min_val = min(arr)
+    max_val = max(arr)
+
+    # 创建 n 个桶
+    buckets = [[] for _ in range(n)]
+
+    # 将元素分配到各个桶中
+    for num in arr:
+        # 线性变换到 [0, 1)
+        normalized_num = (num - min_val) / (max_val - min_val)
+        # 计算桶的索引
+        bucket_index = int(n * normalized_num)
+        # 处理边界情况（例如 normalized_num == 1）
+        if bucket_index == n:
+            bucket_index -= 1
+        buckets[bucket_index].append(num)
+
+    # 对每个桶中的元素进行排序（这里使用插入排序）
+    for bucket in buckets:
+        insertion_sort(bucket)
+
+    # 将各个桶中的元素依次取出，得到排序后的结果
+    sorted_arr = []
+    for bucket in buckets:
+        sorted_arr.extend(bucket)
+
+    return sorted_arr
 """
 桶排序最好情况下使用线性时间O(n)，桶排序的时间复杂度，取决与对各个桶之间数据进行排序的时间复杂度，因为其它部分的时间复杂度都为O(n)。很显然，桶划分的越小，各个桶之间的数据越少，排序所用的时间也会越少。但相应的空间消耗就会增大。
 最佳情况：T(n) = O(n+k)
