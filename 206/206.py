@@ -26,7 +26,9 @@ class Solution:
         #not head是head空链表的情况，只此一种
         res=self.reverseList(head.next)
         head.next.next=head
+        #后一个节点指向当前节点
         head.next=None
+        #当前节点不指向前一个节点
         return res
 #将cur的下一个节点的next指向cur，并且将cur的next指向None避免产生环
 #其余的操作都是转置，逻辑和上面的一样但是更好理解

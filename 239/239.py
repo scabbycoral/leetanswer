@@ -12,7 +12,7 @@ class Solution:
         for i in range(k, n):
             heapq.heappush(q, (-nums[i], i))
             while q[0][1] <= i - k:
-            #循环判断删除因为怕有多个相同最大值
+            #因为有可能保存了n个已经在范围外的最大值，因为堆不考虑堆顶以外的检查
                 heapq.heappop(q)
                 #q[0][1]是最大值原本的位置
                 #最大值如果在窗口外就出去，小值不用管

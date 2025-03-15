@@ -1,3 +1,4 @@
+#用栈实现队列
 class CQueue:
     def __init__(self):
         self.A, self.B = [], []

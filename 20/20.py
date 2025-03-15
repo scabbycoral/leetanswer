@@ -49,3 +49,22 @@ class Solution:
             elif not st or st.pop() != c:  # c 是右括号
                 return False  # 没有左括号，或者左括号类型不对
         return not st  # 所有左括号必须匹配完毕
+
+
+class Solution:
+    def isValid(self, s: str) -> bool:
+        dic={')':'(',']':'[','}':'{'}
+        stack=[]
+        for i in s:
+            if not stack or i in dic.values():
+                stack.append(i)
+            else:
+                if stack[-1]==dic[i]:
+                    stack.pop()
+                else:
+                    return False
+        return not stack
+        #为什么加not stack
+        #因为False有两种情况，一种是左右括号不匹配，从return False退出
+        #一种是stack已经清空了，但是进入了一个无法匹配的右括号，这样不管这个右括号右侧是否符合规则，到最后stack一定不是空的
+        #如果i不是左括号，那么符合第一个if标准的情况一定是，i是右括号并且stack为空

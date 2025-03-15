@@ -1,5 +1,5 @@
 import queue
-
+#模拟双端队列
 class Checkout:
     def __init__(self):
         self.queue = queue.Queue()

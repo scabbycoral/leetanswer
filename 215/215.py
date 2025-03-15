@@ -45,3 +45,14 @@ class Solution:
         return 0
 #O(n)
 #顺序表，按照顺序表保存的每个元素个数进行k-，只需要知道k<=0的一段位置之一即可，因为这段保存的数据一样
+
+class Solution:
+    def findKthLargest(self, nums: List[int], k: int) -> int:
+        s=[]
+        for i in range(k):
+            heappush(s,nums[i])
+        for i in range(k,len(nums)):
+            if nums[i]>s[0]:
+                heappop(s)
+                heappush(s,nums[i])
+        return s[0]

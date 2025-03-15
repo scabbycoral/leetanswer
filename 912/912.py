@@ -320,67 +320,7 @@ class Solution:
 
 
 #快速排序
-import random
-from typing import List
-
-class Solution:
-    def sortArray(self, nums: List[int]) -> List[int]:
-        def partition(arr, low, high):
-            # 随机选择基准元素并交换到最右边
-            pivot_idx = random.randint(low, high)
-            arr[pivot_idx], arr[high] = arr[high], arr[pivot_idx]
-            pivot = arr[high]
-            i = low - 1  # 小于等于基准元素的区域的末尾
-
-            for j in range(low, high):
-                if arr[j] <= pivot:
-                    i += 1
-                    arr[i], arr[j] = arr[j], arr[i]  # 将小于等于基准的元素交换到左侧
-
-            # 将基准元素放到正确的位置，所有小于他的元素的右端
-            arr[i + 1], arr[high] = arr[high], arr[i + 1]
-            return i + 1
-
-        def quickSort(arr, low, high):
-            if low < high:
-                mid = partition(arr, low, high)  # 以mid为分割点
-                quickSort(arr, low, mid - 1)      # 递归对左半部分排序
-                quickSort(arr, mid + 1, high)     # 递归对右半部分排序
-
-        quickSort(nums, 0, len(nums) - 1)  # 调用快排函数对nums进行排序
-        return nums
-#o(nlogn)，o(logn)
-#单指针法：for i容易造成递归树倾斜
-#找到比key小的移到左边，然后把key放到小部分最后一个
-for (int i = left + 1; i <= right; i++) {
-    if (nums[i] < pivot) {
-        lt++;
-        swap(nums, i, lt);
-    }
-}
-swap(nums, left, lt);
-#双指针法：right、left避免倾斜
-#左右同时进行，key放在已排序最后一个
-#三指针法：将等于key的部分单独用i控制
-#lr是左右边界，lt和gt是小于部分和大于部分的右左边界
-int lt = left;
-int gt = right + 1;
-int i = left + 1;
-while (i < gt) {
-    if (nums[i] < pivot) {
-        lt++;
-        swap(nums, i, lt);
-        i++;
-    } else if (nums[i] == pivot) {
-        i++;
-    } else {
-        gt--;
-        swap(nums, i, gt);
-    }
-}
-swap(nums, left, lt);
-
-#更好理解
+#每次确定mid位置的元素
 class Solution:
     def sortArray(self, nums: List[int]) -> List[int]:
         def part(nums,l,r):

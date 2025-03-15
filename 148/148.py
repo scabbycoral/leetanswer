@@ -1,6 +1,5 @@
 #插入排序
 #因为本题的第一个节点就有可能被移动，所以返回head没有意义，head有可能已经成为别的节点，需要一个虚拟节点在函数一开始就指向head
-#答案和head是连接的
 class Solution:
     def insertionSortList(self, head: Optional[ListNode]) -> Optional[ListNode]:
         res=ListNode(-1)
@@ -141,6 +140,7 @@ class Solution:
         while fast and fast.next:
             slow = slow.next
             fast = fast.next.next
+            #如果链表长度为偶数，这里的slow是中间节点的第一个
         left_head=head
         right_head = slow.next
         slow.next = None  # 拆分链表
