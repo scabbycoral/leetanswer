@@ -1,0 +1,1 @@
+python implement for leetcode
