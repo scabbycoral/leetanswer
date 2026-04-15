@@ -1,12 +1,12 @@
 body {
   font-family: 'Segoe UI', Roboto, sans-serif;
-  background: #ffffff;
+  background: #f6f8fa;
   color: #24292f;
   padding: 20px;
   margin: 0;
 }
 .container {
-  max-width: 1200px;
+  max-width: 1400px;
   margin: 0 auto;
 }
 h1 {
@@ -27,22 +27,29 @@ h1 {
   font-size: 14px;
 }
 
-/* 大类 */
+/* 大类样式 + 高亮 */
 .category {
   display: inline-block;
-  background: #f6f8fa;
+  background: #ffffff;
   border: 1px solid #d1d9e0;
   padding: 6px 12px;
   margin: 4px;
   border-radius: 6px;
   cursor: pointer;
   font-size: 14px;
+  transition: all 0.2s;
 }
 .category:hover {
-  background: #e9ecef;
+  background: #f0f4f8;
+}
+.category.active {
+  background: #238636 !important;
+  color: white !important;
+  border-color: #238636 !important;
+  font-weight: bold;
 }
 
-/* 小类 */
+/* 小类样式 + 高亮 */
 .subtags {
   display: none;
   margin: 10px 0;
@@ -57,12 +64,19 @@ h1 {
   cursor: pointer;
   border: 1px solid #d1d9e0;
   font-size: 14px;
+  transition: all 0.2s;
 }
 .subtag:hover {
   background: #f0f4f8;
 }
+.subtag.active {
+  background: #238636 !important;
+  color: white !important;
+  border-color: #238636 !important;
+  font-weight: bold;
+}
 
-/* 知识点折叠面板 */
+/* 知识点分栏布局 */
 .note-wrapper {
   margin: 14px 0;
 }
@@ -75,23 +89,58 @@ h1 {
   width: 100%;
   text-align: left;
   font-size: 14px;
+  margin-bottom: 8px;
 }
 .note-content {
-  background: #f8f9fa;
-  padding: 14px;
-  margin-top: 6px;
+  display: none; /* 默认折叠 */
+  gap: 20px;
+}
+.note-text {
+  flex: 1;
+  background: #ffffff;
+  padding: 16px;
   border-radius: 8px;
   border-left: 4px solid #238636;
-  display: none; /* 默认折叠 */
-  white-space: pre-wrap;
-  font-family: inherit;
+  line-height: 1.6;
+}
+.note-code {
+  flex: 1;
+  background: #ffffff;
+  padding: 16px;
+  border-radius: 8px;
+  border-left: 4px solid #0969da;
+  overflow-x: auto;
 }
 
-/* 表格 */
+/* 锚点跳转样式 */
+.fig-link {
+  color: #0969da;
+  cursor: pointer;
+  text-decoration: underline;
+  font-size: 0.9em;
+  margin-left: 4px;
+}
+.fig-link:hover {
+  color: #0550ae;
+}
+
+/* 代码高亮样式 */
+pre {
+  background: #f6f8fa;
+  padding: 12px;
+  border-radius: 6px;
+  overflow-x: auto;
+}
+code {
+  font-family: 'Courier New', monospace;
+}
+
+/* 表格样式 */
 table {
   width: 100%;
   border-collapse: collapse;
   margin-top: 20px;
+  background: #ffffff;
 }
 th, td {
   border: 1px solid #d1d9e0;
@@ -104,14 +153,4 @@ th {
 a {
   color: #0969da;
   text-decoration: none;
-}
-.subtag.active {
-  background-color: #238636 !important;
-  color: white !important;
-  border-color: #238636 !important;
-}
-.category.active {
-  background: #238636 !important;
-  color: white !important;
-  border-color: #238636 !important;
 }

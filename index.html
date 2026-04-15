@@ -5,21 +5,22 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>算法题库</title>
   <link rel="stylesheet" href="style.css">
+  <!-- 引入marked.js 实现Markdown渲染 + 代码高亮 -->
+  <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github.min.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+  <script>hljs.highlightAll();</script>
 </head>
 <body>
   <div class="container">
     <h1>⚡️ 算法题库 ⚡️</h1>
-
-    <!-- 搜索框 -->
     <div class="search-box">
       <input type="text" id="search-input" placeholder="🔍 搜索知识点...">
     </div>
-
     <div id="categories"></div>
     <div id="note-container"></div>
     <div id="problem-table-container"></div>
   </div>
-
   <script src="script.js"></script>
 </body>
 </html>

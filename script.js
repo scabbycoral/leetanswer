@@ -1,7 +1,7 @@
 let problems = [];
 let activeCategory = null;
 let currentNoteContent = "";
-let activeSubtag = null; // 追踪当前选中的小标签
+let activeSubtag = null;
 
 const tagStructure = {
   "比赛": ["LC", "CF"],
@@ -17,6 +17,17 @@ const fileMap = {
   "二分": "binary.md"
 };
 
+// 配置marked.js 渲染代码块
+marked.setOptions({
+  highlight: function(code, lang) {
+    if (lang && hljs.getLanguage(lang)) {
+      return hljs.highlight(code, { language: lang }).value;
+    }
+    return hljs.highlightAuto(code).value;
+  },
+  breaks: true
+});
+
 window.addEventListener("DOMContentLoaded", async () => {
   const container = document.querySelector(".container");
   const noteContainer = document.getElementById("note-container");
@@ -24,23 +35,29 @@ window.addEventListener("DOMContentLoaded", async () => {
   const catContainer = document.getElementById("categories");
   const searchInput = document.getElementById("search-input");
 
-  // 搜索知识点
+  // 搜索功能
   searchInput.addEventListener("input", (e) => {
     const keyword = e.target.value.toLowerCase();
     if (!currentNoteContent) return;
-    let highlighted = currentNoteContent.replace(/</g, "&lt;").replace(/>/g, "&gt;");
+    const textEl = document.getElementById("note-text");
+    if (!textEl) return;
+    
+    let html = marked.parse(currentNoteContent);
     if (keyword) {
-      const regex = new RegExp(keyword, "gi");
-      highlighted = highlighted.replace(regex, (match) => `<mark>${match}</mark>`);
+      const regex = new RegExp(`(${keyword})`, "gi");
+      html = html.replace(regex, `<mark>$1</mark>`);
     }
-    document.getElementById("note-text").innerHTML = highlighted;
+    textEl.innerHTML = html;
+    hljs.highlightAll();
   });
 
   // 加载题目
   try {
     const pRes = await fetch("problems.json");
     problems = await pRes.json();
-  } catch (e) {}
+  } catch (e) {
+    console.error("加载题目失败:", e);
+  }
 
   // 渲染大类
   for (const cat in tagStructure) {
@@ -59,56 +76,53 @@ window.addEventListener("DOMContentLoaded", async () => {
       noteContainer.innerHTML = "";
       clearTable();
       activeSubtag = null;
+      // 清除所有高亮
+      document.querySelectorAll(".category, .subtag").forEach(el => el.classList.remove("active"));
       return;
     }
 
+    // 切换大类时清除旧高亮
+    document.querySelectorAll(".category, .subtag").forEach(el => el.classList.remove("active"));
     activeCategory = cat;
-    activeSubtag = null;
+    // 点亮当前大类
+    document.querySelectorAll(".category").forEach(c => {
+      if (c.innerText === cat) c.classList.add("active");
+    });
+    
     showSubtags(cat);
     await loadNote(cat);
     clearTable();
   }
 
-  // 显示小类
+  // 显示小类（核心：点击小类同时点亮大类）
   function showSubtags(cat) {
-	let subtagsDiv = document.querySelector(".subtags");
-	if (!subtagsDiv) {
-	subtagsDiv = document.createElement("div");
-	subtagsDiv.className = "subtags";
-	container.insertBefore(subtagsDiv, noteContainer);
-	}
+    let subtagsDiv = document.querySelector(".subtags");
+    if (!subtagsDiv) {
+      subtagsDiv = document.createElement("div");
+      subtagsDiv.className = "subtags";
+      container.insertBefore(subtagsDiv, noteContainer);
+    }
 
-	subtagsDiv.innerHTML = "";
-	tagStructure[cat].forEach(sub => {
-	const btn = document.createElement("span");
-	btn.className = "subtag";
-	btn.innerText = sub;
-	btn.onclick = () => {
-	  // 清空所有高亮
-	  document.querySelectorAll(".subtag").forEach(s => s.classList.remove("active"));
-	  document.querySelectorAll(".category").forEach(c => c.classList.remove("active"));
-
-	  // 给当前小类 + 当前大类 同时亮
-	  btn.classList.add("active");
-
-	  // 找到当前大类并点亮（最稳写法）
-	  const allCats = document.querySelectorAll(".category");
-	  allCats.forEach(c => {
-		if (c.innerText == cat) c.classList.add("active");
-	  });
-
-	  filterByLeaf(sub);
-	};
-	subtagsDiv.appendChild(btn);
-	});
-	subtagsDiv.style.display = "flex";
-  }
-
-  // ✅ 核心：设置选中标签高亮
-  function setActiveSubtag(btn) {
-    document.querySelectorAll(".subtag").forEach(s => s.classList.remove("active"));
-    btn.classList.add("active");
-    activeSubtag = btn.innerText;
+    subtagsDiv.innerHTML = "";
+    tagStructure[cat].forEach(sub => {
+      const btn = document.createElement("span");
+      btn.className = "subtag";
+      btn.innerText = sub;
+      btn.onclick = () => {
+        // 1. 清除所有高亮
+        document.querySelectorAll(".category, .subtag").forEach(el => el.classList.remove("active"));
+        // 2. 点亮当前小类
+        btn.classList.add("active");
+        // 3. 点亮所属大类
+        document.querySelectorAll(".category").forEach(c => {
+          if (c.innerText === cat) c.classList.add("active");
+        });
+        // 4. 筛选题目
+        filterByLeaf(sub);
+      };
+      subtagsDiv.appendChild(btn);
+    });
+    subtagsDiv.style.display = "flex";
   }
 
   function hideSubtags() {
@@ -116,7 +130,7 @@ window.addEventListener("DOMContentLoaded", async () => {
     if (st) st.style.display = "none";
   }
 
-  // 加载 MD 知识点
+  // 加载MD知识点（分栏布局+锚点跳转）
   async function loadNote(cat) {
     try {
       const res = await fetch(`data/${fileMap[cat]}`);
@@ -126,30 +140,84 @@ window.addEventListener("DOMContentLoaded", async () => {
       <div class="note-wrapper">
         <button class="note-toggle" onclick="toggleNote()">📖 展开知识点</button>
         <div class="note-content" id="note-content">
-          <div id="note-text"></div>
+          <div class="note-text" id="note-text"></div>
+          <div class="note-code" id="note-code">
+            <p>点击左侧「Fig」链接查看对应代码</p>
+          </div>
         </div>
       </div>`;
 
-      document.getElementById("note-text").textContent = currentNoteContent;
+      // 渲染MD + 处理锚点
+      renderNoteWithAnchors(currentNoteContent);
+      hljs.highlightAll();
     } catch (e) {
+      console.error("加载知识点失败:", e);
       noteContainer.innerHTML = `<div class="note">无知识点</div>`;
     }
+  }
+
+  // 渲染MD + 处理Fig锚点
+  function renderNoteWithAnchors(content) {
+    const textEl = document.getElementById("note-text");
+    const codeEl = document.getElementById("note-code");
+    
+    // 分割文本和代码块
+    const blocks = content.split(/(```[\s\S]*?```)/g);
+    let textHtml = "";
+    let codeBlocks = [];
+
+    blocks.forEach((block, index) => {
+      if (block.startsWith("```")) {
+        // 代码块：提取语言和代码
+        const lines = block.split("\n");
+        const lang = lines[0].replace("```", "").trim() || "plaintext";
+        const code = lines.slice(1, -1).join("\n");
+        codeBlocks.push({ lang, code, id: `code-${index}` });
+        // 在文本中插入Fig链接
+        textHtml += `<span class="fig-link" data-code-id="code-${index}">[Fig ${codeBlocks.length}]</span>`;
+      } else {
+        // 普通文本：直接渲染MD
+        textHtml += marked.parse(block);
+      }
+    });
+
+    textEl.innerHTML = textHtml;
+    // 初始化右侧代码区
+    codeEl.innerHTML = `<p>点击左侧「Fig」链接查看对应代码</p>`;
+
+    // 绑定Fig点击事件
+    document.querySelectorAll(".fig-link").forEach(link => {
+      link.addEventListener("click", () => {
+        const codeId = link.dataset.codeId;
+        const codeBlock = codeBlocks.find(b => b.id === codeId);
+        if (codeBlock) {
+          codeEl.innerHTML = `
+            <pre><code class="language-${codeBlock.lang}">${codeBlock.code}</code></pre>
+          `;
+          hljs.highlightElement(codeEl.querySelector("code"));
+          // 滚动到代码区
+          codeEl.scrollIntoView({ behavior: "smooth" });
+        }
+      });
+    });
+
+    hljs.highlightAll();
   }
 
   // 折叠/展开知识点
   window.toggleNote = function () {
     const content = document.getElementById("note-content");
     const btn = document.querySelector(".note-toggle");
-    if (content.style.display === "block") {
+    if (content.style.display === "flex") {
       content.style.display = "none";
       btn.textContent = "📖 展开知识点";
     } else {
-      content.style.display = "block";
+      content.style.display = "flex";
       btn.textContent = "📕 收起知识点";
     }
   };
 
-  // 筛题
+  // 筛选题目
   function filterByLeaf(leafTag) {
     const filtered = problems
       .filter(p => p.tags.includes(leafTag))
@@ -158,12 +226,12 @@ window.addEventListener("DOMContentLoaded", async () => {
     problemTableContainer.innerHTML = `
     <table>
       <tr><th>🔥 序号</th><th>📚 题目</th><th>⭐️ 标签</th></tr>
-      ${filtered.map(p => `
-      <tr>
-        <td>${p.id}</td>
-        <td><a href="${p.url}" target="_blank">${p.title}</a></td>
-        <td>${p.tags.join(", ")}</td>
-      </tr>`).join("")}
+    ${filtered.map(p => `
+    <tr>
+      <td>${p.id}</td>
+      <td><a href="${p.url}" target="_blank">${p.title}</a></td>
+      <td>${p.tags.join(", ")}</td>
+    </tr>`).join("")}
     </table>`;
   }
 
