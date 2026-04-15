@@ -3,24 +3,24 @@
     "id": 1,
     "title": "两数之和",
     "url": "https://leetcode.cn/problems/two-sum",
-    "tags": ["数学:加法", "位运算:库函数"]
+    "tags": ["加法", "库函数"]
   },
   {
     "id": 136,
     "title": "只出现一次的数字",
     "url": "https://leetcode.cn/problems/single-number",
-    "tags": ["位运算:XOR"]
+    "tags": ["XOR"]
   },
   {
     "id": 461,
     "title": "汉明距离",
     "url": "https://leetcode.cn/problems/hamming-distance",
-    "tags": ["位运算:XOR"]
+    "tags": ["XOR"]
   },
   {
     "id": 704,
     "title": "二分查找",
     "url": "https://leetcode.cn/problems/binary-search",
-    "tags": ["二分:基础"]
+    "tags": ["基础"]
   }
 ]

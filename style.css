@@ -1,5 +1,5 @@
 body {
-  font-family: 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+  font-family: 'Segoe UI', Roboto, sans-serif;
   background: #ffffff;
   color: #24292f;
   padding: 20px;
@@ -12,54 +12,52 @@ body {
 
 h1 {
   text-align: center;
-  margin-bottom: 24px;
-  color: #24292f;
+  margin-bottom: 20px;
 }
 
-/* 大类按钮 */
+/* 大类变小！ */
 .category {
+  display: inline-block;
   background: #f6f8fa;
   border: 1px solid #d1d9e0;
-  padding: 10px 16px;
-  margin: 8px;
-  border-radius: 8px;
+  padding: 6px 12px;
+  margin: 4px;
+  border-radius: 6px;
   cursor: pointer;
-  text-align: center;
-  font-weight: 500;
+  font-size: 14px;
 }
 .category:hover {
   background: #e9ecef;
 }
 
-/* 小标签 */
+/* 小类 */
 .subtags {
   display: none;
   margin: 10px 0;
   justify-content: center;
   flex-wrap: wrap;
-  gap: 8px;
+  gap: 6px;
 }
 .subtag {
-  background: #ffffff;
-  padding: 6px 12px;
+  background: #fff;
+  padding: 5px 10px;
   border-radius: 6px;
   cursor: pointer;
   border: 1px solid #d1d9e0;
+  font-size: 14px;
 }
 .subtag:hover {
   background: #f0f4f8;
-  border-color: #adb5bd;
 }
 
-/* 知识点笔记 */
+/* 知识点 */
 .note {
   background: #f8f9fa;
-  padding: 14px 18px;
-  margin: 14px 0;
+  padding: 14px;
+  margin: 12px 0;
   border-radius: 8px;
   border-left: 4px solid #238636;
   white-space: pre-wrap;
-  display: none;
 }
 
 /* 表格 */
@@ -67,22 +65,16 @@ table {
   width: 100%;
   border-collapse: collapse;
   margin-top: 20px;
-  background: #ffffff;
 }
 th, td {
   border: 1px solid #d1d9e0;
-  padding: 12px;
+  padding: 10px;
   text-align: center;
 }
 th {
   background: #f6f8fa;
-  font-weight: 600;
 }
-
 a {
   color: #0969da;
   text-decoration: none;
-}
-a:hover {
-  text-decoration: underline;
 }

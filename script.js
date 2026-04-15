@@ -8,16 +8,25 @@ const tagStructure = {
   "二分": ["基础", "二分答案"]
 };
 
+// 只改这里：文件名英文
+const fileMap = {
+  "比赛": "contest.json",
+  "位运算": "bitwise.json",
+  "数学": "math.json",
+  "二分": "binary.json"
+};
+
 window.addEventListener("DOMContentLoaded", async () => {
   const pRes = await fetch("problems.json");
   problems = await pRes.json();
   renderCategories();
 });
 
+// 渲染大类
 function renderCategories() {
   const catContainer = document.getElementById("categories");
   for (const cat in tagStructure) {
-    const div = document.createElement("div");
+    const div = document.createElement("span");
     div.className = "category";
     div.innerText = cat;
     div.onclick = () => toggleCategory(cat);
@@ -25,6 +34,7 @@ function renderCategories() {
   }
 }
 
+// 切换大类
 async function toggleCategory(cat) {
   if (activeCategory === cat) {
     activeCategory = null;
@@ -36,24 +46,25 @@ async function toggleCategory(cat) {
 
   activeCategory = cat;
   showSubtags(cat);
-  await loadAndShowNote(cat);
+  await loadNote(cat);
   clearTable();
 }
 
+// 显示小类
 function showSubtags(cat) {
   let subtagsDiv = document.querySelector(".subtags");
   if (!subtagsDiv) {
     subtagsDiv = document.createElement("div");
     subtagsDiv.className = "subtags";
-    document.querySelector(".container").insertBefore(subtagsDiv, document.getElementById("note-container"));
+    container.insertBefore(subtagsDiv, noteContainer);
   }
 
   subtagsDiv.innerHTML = "";
   tagStructure[cat].forEach(sub => {
-    const btn = document.createElement("div");
+    const btn = document.createElement("span");
     btn.className = "subtag";
     btn.innerText = sub;
-    btn.onclick = () => filterProblems(`${cat}:${sub}`);
+    btn.onclick = () => filterByLeaf(sub);
     subtagsDiv.appendChild(btn);
   });
   subtagsDiv.style.display = "flex";
@@ -64,22 +75,13 @@ function hideSubtags() {
   if (st) st.style.display = "none";
 }
 
-async function loadAndShowNote(cat) {
+// 加载知识点
+async function loadNote(cat) {
   const noteContainer = document.getElementById("note-container");
-  // 中文大类 → 英文文件名映射
-  const fileMap = {
-    "比赛": "contest.json",
-    "位运算": "bitwise.json",
-    "数学": "math.json",
-    "二分": "binary.json"
-  };
-  const fileName = fileMap[cat] || `${cat}.json`;
   try {
-    const res = await fetch(`data/${fileName}`);
+    const res = await fetch(`data/${fileMap[cat]}`);
     const data = await res.json();
-    noteContainer.innerHTML = `
-      <div class="note" id="note-content">${data.content}</div>
-    `;
+    noteContainer.innerHTML = `<div class="note">${data.content}</div>`;
   } catch (e) {
     noteContainer.innerHTML = `<div class="note">无知识点</div>`;
   }
@@ -89,18 +91,15 @@ function clearNote() {
   document.getElementById("note-container").innerHTML = "";
 }
 
-function filterProblems(tag) {
+// 按叶子tag筛题
+function filterByLeaf(leafTag) {
   const filtered = problems
-    .filter(p => p.tags.includes(tag))
+    .filter(p => p.tags.includes(leafTag))
     .sort((a, b) => a.id - b.id);
 
-  const table = `
+  document.getElementById("problem-table-container").innerHTML = `
   <table>
-    <tr>D
-      <th>🔥 序号</th>
-      <th>📚 题目</th>
-      <th>⭐️ 标签</th>
-    </tr>
+    <tr><th>🔥 序号</th><th>📚 题目</th><th>⭐️ 标签</th></tr>
     ${filtered.map(p => `
     <tr>
       <td>${p.id}</td>
@@ -108,8 +107,6 @@ function filterProblems(tag) {
       <td>${p.tags.join(", ")}</td>
     </tr>`).join("")}
   </table>`;
-
-  document.getElementById("problem-table-container").innerHTML = table;
 }
 
 function clearTable() {
