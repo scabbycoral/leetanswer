@@ -1,7 +1,7 @@
 let problems = [];
 let activeCategory = null;
+let currentNoteContent = "";
 
-// 标签结构：大类 => 小类（叶子标签）
 const tagStructure = {
   "比赛": ["LC", "CF"],
   "位运算": ["库函数", "XOR", "AND/OR"],
@@ -9,47 +9,53 @@ const tagStructure = {
   "二分": ["基础", "二分答案"]
 };
 
-// 大类 → 英文知识点文件名（中文内容保留）
 const fileMap = {
-  "比赛": "contest.json",
-  "位运算": "bitwise.json",
-  "数学": "math.json",
-  "二分": "binary.json"
+  "比赛": "contest.md",
+  "位运算": "bitwise.md",
+  "数学": "math.md",
+  "二分": "binary.md"
 };
 
-// 【核心修复】所有DOM操作必须在DOM加载完成后执行
 window.addEventListener("DOMContentLoaded", async () => {
-  // 【关键】在DOM加载后再获取元素，彻底解决未定义问题
   const container = document.querySelector(".container");
   const noteContainer = document.getElementById("note-container");
   const problemTableContainer = document.getElementById("problem-table-container");
   const catContainer = document.getElementById("categories");
+  const searchInput = document.getElementById("search-input");
 
+  // 搜索功能
+  searchInput.addEventListener("input", (e) => {
+    const keyword = e.target.value.toLowerCase();
+    if (!currentNoteContent) return;
+    let highlighted = currentNoteContent.replace(/</g, "&lt;").replace(/>/g, "&gt;");
+    if (keyword) {
+      const regex = new RegExp(keyword, "gi");
+      highlighted = highlighted.replace(regex, (match) => `<mark>${match}</mark>`);
+    }
+    document.getElementById("note-text").innerHTML = highlighted;
+  });
+
+  // 加载题目
   try {
     const pRes = await fetch("problems.json");
     problems = await pRes.json();
-    renderCategories();
-  } catch (e) {
-    console.error("加载题目数据失败:", e);
+  } catch (e) {}
+
+  // 渲染大类
+  for (const cat in tagStructure) {
+    const div = document.createElement("span");
+    div.className = "category";
+    div.innerText = cat;
+    div.onclick = () => toggleCategory(cat);
+    catContainer.appendChild(div);
   }
 
-  // 渲染大类按钮
-  function renderCategories() {
-    for (const cat in tagStructure) {
-      const div = document.createElement("span");
-      div.className = "category";
-      div.innerText = cat;
-      div.onclick = () => toggleCategory(cat);
-      catContainer.appendChild(div);
-    }
-  }
-
-  // 切换大类：展开/收起小类 + 加载知识点
+  // 切换大类
   async function toggleCategory(cat) {
     if (activeCategory === cat) {
       activeCategory = null;
       hideSubtags();
-      clearNote();
+      noteContainer.innerHTML = "";
       clearTable();
       return;
     }
@@ -80,30 +86,45 @@ window.addEventListener("DOMContentLoaded", async () => {
     subtagsDiv.style.display = "flex";
   }
 
-  // 隐藏小类
   function hideSubtags() {
     const st = document.querySelector(".subtags");
     if (st) st.style.display = "none";
   }
 
-  // 加载对应大类的知识点
+  // 加载 MD 知识点（默认折叠）
   async function loadNote(cat) {
     try {
       const res = await fetch(`data/${fileMap[cat]}`);
-      const data = await res.json();
-      noteContainer.innerHTML = `<div class="note">${data.content}</div>`;
+      currentNoteContent = await res.text();
+
+      noteContainer.innerHTML = `
+      <div class="note-wrapper">
+        <button class="note-toggle" onclick="toggleNote()">📖 展开知识点</button>
+        <div class="note-content" id="note-content">
+          <div id="note-text"></div>
+        </div>
+      </div>`;
+
+      document.getElementById("note-text").textContent = currentNoteContent;
     } catch (e) {
-      console.error("加载知识点失败:", e);
       noteContainer.innerHTML = `<div class="note">无知识点</div>`;
     }
   }
 
-  // 清空知识点
-  function clearNote() {
-    noteContainer.innerHTML = "";
-  }
+  // 折叠/展开知识点
+  window.toggleNote = function () {
+    const content = document.getElementById("note-content");
+    const btn = document.querySelector(".note-toggle");
+    if (content.style.display === "block") {
+      content.style.display = "none";
+      btn.textContent = "📖 展开知识点";
+    } else {
+      content.style.display = "block";
+      btn.textContent = "📕 收起知识点";
+    }
+  };
 
-  // 按叶子标签筛选题目
+  // 筛题
   function filterByLeaf(leafTag) {
     const filtered = problems
       .filter(p => p.tags.includes(leafTag))
@@ -111,11 +132,7 @@ window.addEventListener("DOMContentLoaded", async () => {
 
     problemTableContainer.innerHTML = `
     <table>
-      <tr>
-        <th>🔥 序号</th>
-        <th>📚 题目</th>
-        <th>⭐️ 标签</th>
-      </tr>
+      <tr><th>🔥 序号</th><th>📚 题目</th><th>⭐️ 标签</th></tr>
       ${filtered.map(p => `
       <tr>
         <td>${p.id}</td>
@@ -125,7 +142,6 @@ window.addEventListener("DOMContentLoaded", async () => {
     </table>`;
   }
 
-  // 清空题目表格
   function clearTable() {
     problemTableContainer.innerHTML = "";
   }

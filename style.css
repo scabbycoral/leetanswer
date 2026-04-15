@@ -9,13 +9,25 @@ body {
   max-width: 1200px;
   margin: 0 auto;
 }
-
 h1 {
   text-align: center;
   margin-bottom: 20px;
 }
 
-/* 大类变小！ */
+/* 搜索框 */
+.search-box {
+  text-align: center;
+  margin-bottom: 16px;
+}
+#search-input {
+  width: 60%;
+  padding: 8px 12px;
+  border: 1px solid #d1d9e0;
+  border-radius: 6px;
+  font-size: 14px;
+}
+
+/* 大类 */
 .category {
   display: inline-block;
   background: #f6f8fa;
@@ -50,14 +62,29 @@ h1 {
   background: #f0f4f8;
 }
 
-/* 知识点 */
-.note {
+/* 知识点折叠面板 */
+.note-wrapper {
+  margin: 14px 0;
+}
+.note-toggle {
+  background: #f6f8fa;
+  border: 1px solid #d1d9e0;
+  padding: 8px 12px;
+  border-radius: 6px;
+  cursor: pointer;
+  width: 100%;
+  text-align: left;
+  font-size: 14px;
+}
+.note-content {
   background: #f8f9fa;
   padding: 14px;
-  margin: 12px 0;
+  margin-top: 6px;
   border-radius: 8px;
   border-left: 4px solid #238636;
+  display: none; /* 默认折叠 */
   white-space: pre-wrap;
+  font-family: inherit;
 }
 
 /* 表格 */
