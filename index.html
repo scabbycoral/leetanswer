@@ -3,71 +3,96 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>算法题库</title>
+  <title>LeetCode 个人题库</title>
   <style>
-    body{font-family:Arial;background:#f6f8fa;padding:20px;}
-    .container{max-width:900px;margin:0 auto;}
-    h1{text-align:center;}
-    #tags{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin:20px 0;}
-    .tag-btn{padding:8px 14px;border:none;border-radius:6px;background:#e1e4e8;cursor:pointer;}
-    .tag-btn.active{background:#238636;color:white;}
-    .problem{background:white;padding:12px;border-radius:6px;margin-bottom:8px;box-shadow:0 1px 2px #00000010;}
+    * { box-sizing: border-box; }
+    body { font-family: system-ui, sans-serif; background: #f6f8fa; margin: 0; padding: 20px; }
+    .container { max-width: 1000px; margin: 0 auto; }
+    h1 { text-align: center; color: #24292f; }
+    .filters { display: flex; gap: 8px; flex-wrap: wrap; justify-content: center; margin: 16px 0; }
+    .btn { padding: 8px 12px; border: none; border-radius: 6px; cursor: pointer; background: #e1e4e8; }
+    .btn.active { background: #238636; color: white; }
+    .problem { background: white; padding: 12px; border-radius: 8px; margin-bottom: 8px; box-shadow: 0 1px 2px #00000012; display: flex; justify-content: space-between; align-items: center; }
+    .title { font-weight: 600; }
+    .tag { color: #6a737d; font-size: 12px; margin-left: 8px; }
+    .status { font-size: 16px; margin-left: 8px; }
   </style>
 </head>
 <body>
-  <div class="container">
-    <h1>LC + CF 题库</h1>
-    <div id="tags"></div>
-    <div id="problem-list"></div>
+
+<div class="container">
+  <h1>LeetCode 个人刷题进度</h1>
+  <div class="filters">
+    <button class="btn" onclick="loadAll()">全部题目</button>
+    <button class="btn" onclick="showDone()">已做</button>
+    <button class="btn" onclick="showUndone()">未做</button>
   </div>
+  <div id="tags" class="filters"></div>
+  <div id="list"></div>
+</div>
 
-  <script>
-    const problems = [
-      { id: 136, title: "只出现一次的数字", tag: "位运算", platform: "LC" },
-      { id: 461, title: "汉明距离", tag: "位运算", platform: "LC" },
-      { id: 704, title: "二分查找", tag: "二分", platform: "LC" },
-      { id: 300, title: "最长上升子序列", tag: "DP", platform: "LC" },
-    ];
+<script>
+// ====================== 只需要改这里 2 行 ======================
+const LEETCODE_SESSION = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfYXV0aF91c2VyX2lkIjoiNDc1NDEwMSIsIl9hdXRoX3VzZXJfYmFja2VuZCI6ImRqYW5nby5jb250cmliLmF1dGguYmFja2VuZHMuTW9kZWxCYWNrZW5kIiwiX2F1dGhfdXNlcl9oYXNoIjoiY2Y1MjhjNmVmN2QwZjBkYTY5ZjMyOTQyMzQ2MjY4OTMwOGE3YmQ0ODZhOGVmNGNlZDJkMTY2ZmE3OTYyOTViYiIsImlkIjo0NzU0MTAxLCJlbWFpbCI6IjI0MTQ0MjE0OTVAcXEuY29tIiwidXNlcm5hbWUiOiJzY3ViY29yYWwiLCJ1c2VyX3NsdWciOiJzY3ViY29yYWwiLCJhdmF0YXIiOiJodHRwczovL2Fzc2V0cy5sZWV0Y29kZS5jbi9hbGl5dW4tbGMtdXBsb2FkL3VzZXJzL3NjdWJjb3JhbC9hdmF0YXJfMTc1OTA0MzQ3My5wbmciLCJwaG9uZV92ZXJpZmllZCI6dHJ1ZSwiZGV2aWNlX2lkIjoiNjIzNGFlMGU2NDdiM2Q1Zjg2YjkyMDBmNjk0Nzg4NGQiLCJpcCI6IjEyMS41Ni41LjQzIiwiX3RpbWVzdGFtcCI6MTc3NDc0NjI1Ni44MzYxNjIzLCJleHBpcmVkX3RpbWVfIjoxNzc3MzE2NDAwLCJ2ZXJzaW9uX2tleV8iOjIsImxhdGVzdF90aW1lc3RhbXBfIjoxNzc2MjE3MjkzfQ.HSpmU9ODnZwTefyCfCyfRVZ7IwoFRjlR3WFPJ24rPIM";
+const CSRF_TOKEN = "pW0ANtRb8dqzXlxRoXfyaB0LKOhLPW1p";
+// ===============================================================
 
-    function buildTags() {
-      let tags = new Set();
-      problems.forEach(p => tags.add(p.tag));
-      const container = document.getElementById("tags");
-      const allBtn = document.createElement("button");
-      allBtn.className = "tag-btn active";
-      allBtn.innerText = "全部";
-      allBtn.onclick = () => { showAll(); setActive("全部"); };
-      container.appendChild(allBtn);
-      Array.from(tags).forEach(tag => {
-        const btn = document.createElement("button");
-        btn.className = "tag-btn";
-        btn.innerText = tag;
-        btn.onclick = () => { filterByTag(tag); setActive(tag); };
-        container.appendChild(btn);
-      });
-    }
+let allProblems = [];
+let solvedSet = new Set();
 
-    function showAll() { render(problems); }
-    function filterByTag(tag) { render(problems.filter(p => p.tag === tag)); }
-    function render(list) {
-      const div = document.getElementById("problem-list");
-      div.innerHTML = "";
-      list.forEach(p => {
-        const item = document.createElement("div");
-        item.className = "problem";
-        item.innerHTML = `<strong>${p.id}. ${p.title}</strong> [${p.platform}] <span style="color:#888">${p.tag}</span>`;
-        div.appendChild(item);
-      });
-    }
-    function setActive(text) {
-      document.querySelectorAll(".tag-btn").forEach(btn => {
-        btn.classList.remove("active");
-        if (btn.innerText === text) btn.classList.add("active");
-      });
-    }
+async function loadData() {
+  document.getElementById("list").innerText = "加载中...";
 
-    buildTags();
-    showAll();
-  </script>
+  const headers = {
+    cookie: `LEETCODE_SESSION=${LEETCODE_SESSION}; csrftoken=${CSRF_TOKEN}`,
+    "x-csrftoken": CSRF_TOKEN,
+    referer: "https://leetcode.cn"
+  };
+
+  // 获取已AC题目
+  const res = await fetch("https://leetcode.cn/api/progress/all/", { headers });
+  const data = await res.json();
+  solvedSet = new Set(data.acedQuestionIds);
+
+  // 获取所有题目
+  const allRes = await fetch("https://leetcode.cn/api/problems/all/", { headers });
+  const allData = await allRes.json();
+
+  allProblems = allData.stat_status_pairs.map(item => ({
+    id: item.stat.question_id,
+    title: item.stat.question__title,
+    slug: item.stat.question__title_slug,
+    done: solvedSet.has(item.stat.question_id)
+  }));
+
+  render(allProblems);
+  makeTags();
+}
+
+function render(list) {
+  const dom = document.getElementById("list");
+  dom.innerHTML = "";
+  list.forEach(p => {
+    const div = document.createElement("div");
+    div.className = "problem";
+    div.innerHTML = `
+      <div>
+        <span class="title">${p.id}. ${p.title}</span>
+      </div>
+      <div>
+        <span class="status">${p.done ? "✅" : "❌"}</span>
+      </div>
+    `;
+    dom.appendChild(div);
+  });
+}
+
+function loadAll() { render(allProblems); }
+function showDone() { render(allProblems.filter(p => p.done)); }
+function showUndone() { render(allProblems.filter(p => !p.done)); }
+function makeTags() { /* 下期加标签筛选 */ }
+
+loadData();
+</script>
 </body>
 </html>
