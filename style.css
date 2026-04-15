@@ -1,3 +1,30 @@
+/* 核心：左右分栏 + 同步滚动 + 不遮挡 */
+.note-content {
+  display: flex;
+  gap: 20px;
+  height: 600px;      /* 固定高度 */
+  overflow: hidden;
+  border: 1px solid #eee;
+  border-radius: 10px;
+  background: #fff;
+}
+
+.note-text {
+  flex: 1;
+  padding: 20px;
+  overflow-y: auto;   /* 左栏独立滚动 */
+  background: #f9f9f9;
+}
+
+.note-code {
+  flex: 1;
+  padding: 20px;
+  overflow-y: auto;   /* 右栏独立滚动 */
+  background: #f6f7f9;
+  border-left: 1px solid #eee;
+}
+
+/* 其他样式保持不变 */
 body {
   font-family: 'Segoe UI', Roboto, sans-serif;
   background: #f6f8fa;
@@ -13,8 +40,6 @@ h1 {
   text-align: center;
   margin-bottom: 20px;
 }
-
-/* 搜索框 */
 .search-box {
   text-align: center;
   margin-bottom: 16px;
@@ -26,8 +51,6 @@ h1 {
   border-radius: 6px;
   font-size: 14px;
 }
-
-/* 大类样式 + 高亮 */
 .category {
   display: inline-block;
   background: #ffffff;
@@ -48,8 +71,6 @@ h1 {
   border-color: #238636 !important;
   font-weight: bold;
 }
-
-/* 小类样式 + 高亮 */
 .subtags {
   display: none;
   margin: 10px 0;
@@ -75,8 +96,6 @@ h1 {
   border-color: #238636 !important;
   font-weight: bold;
 }
-
-/* 知识点分栏布局 */
 .note-wrapper {
   margin: 14px 0;
 }
@@ -91,28 +110,6 @@ h1 {
   font-size: 14px;
   margin-bottom: 8px;
 }
-.note-content {
-  display: none; /* 默认折叠 */
-  gap: 20px;
-}
-.note-text {
-  flex: 1;
-  background: #ffffff;
-  padding: 16px;
-  border-radius: 8px;
-  border-left: 4px solid #238636;
-  line-height: 1.6;
-}
-.note-code {
-  flex: 1;
-  background: #ffffff;
-  padding: 16px;
-  border-radius: 8px;
-  border-left: 4px solid #0969da;
-  overflow-x: auto;
-}
-
-/* 锚点跳转样式 */
 .fig-link {
   color: #0969da;
   cursor: pointer;
@@ -123,8 +120,6 @@ h1 {
 .fig-link:hover {
   color: #0550ae;
 }
-
-/* 代码高亮样式 */
 pre {
   background: #f6f8fa;
   padding: 12px;
@@ -134,8 +129,6 @@ pre {
 code {
   font-family: 'Courier New', monospace;
 }
-
-/* 表格样式 */
 table {
   width: 100%;
   border-collapse: collapse;
@@ -153,27 +146,4 @@ th {
 a {
   color: #0969da;
   text-decoration: none;
-}
-/* 右侧代码面板固定在当前视口，不滚动 */
-.note-content {
-  display: flex;
-  position: relative;
-}
-.note-text {
-  flex: 1;
-  padding-right: 320px; /* 给右侧代码留位置 */
-}
-.note-code {
-  position: fixed;       /* 核心：固定在屏幕，不随页面滚动 */
-  top: 120px;            /* 距离顶部高度（按你页面调） */
-  right: 20px;           /* 贴右边 */
-  width: 300px;          /* 代码区宽度 */
-  max-height: 70vh;      /* 最大高度70%屏幕 */
-  overflow-y: auto;      /* 代码长了内部滚动 */
-  background: #1e1e1e;
-  color: #ddd;
-  padding: 12px 16px;
-  border-radius: 8px;
-  box-shadow: 0 0 12px rgba(0,0,0,0.3);
-  z-index: 100;
 }
