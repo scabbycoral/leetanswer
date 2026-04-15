@@ -1,3 +1,0 @@
-This is a tag file. 
-字符串的最大公因子
-gcd

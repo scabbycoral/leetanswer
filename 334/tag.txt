@@ -1,3 +1,0 @@
-This is a tag file. 
-递增的三元子数组
-贪心
