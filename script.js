@@ -2,10 +2,10 @@ let problems = [];
 let activeCategory = null;
 
 const tagStructure = {
-  "contest": ["LC", "CF"],
-  "bitwise": ["库函数", "XOR", "AND/OR"],
-  "math": ["加法", "乘法", "模运算"],
-  "binary": ["基础", "二分答案"]
+  "比赛": ["LC", "CF"],
+  "位运算": ["库函数", "XOR", "AND/OR"],
+  "数学": ["加法", "乘法", "模运算"],
+  "二分": ["基础", "二分答案"]
 };
 
 window.addEventListener("DOMContentLoaded", async () => {
@@ -66,8 +66,16 @@ function hideSubtags() {
 
 async function loadAndShowNote(cat) {
   const noteContainer = document.getElementById("note-container");
+  // 中文大类 → 英文文件名映射
+  const fileMap = {
+    "比赛": "contest.json",
+    "位运算": "bitwise.json",
+    "数学": "math.json",
+    "二分": "binary.json"
+  };
+  const fileName = fileMap[cat] || `${cat}.json`;
   try {
-    const res = await fetch(`data/${cat}.json`);
+    const res = await fetch(`data/${fileName}`);
     const data = await res.json();
     noteContainer.innerHTML = `
       <div class="note" id="note-content">${data.content}</div>
@@ -88,7 +96,7 @@ function filterProblems(tag) {
 
   const table = `
   <table>
-    <tr>
+    <tr>D
       <th>🔥 序号</th>
       <th>📚 题目</th>
       <th>⭐️ 标签</th>
