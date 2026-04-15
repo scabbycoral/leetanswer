@@ -1,0 +1,54 @@
+body {
+  font-family: Arial;
+  background: #f6f8fa;
+  padding: 20px;
+}
+.container {
+  max-width: 1000px;
+  margin: 0 auto;
+}
+h1 {
+  text-align: center;
+}
+#tag-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  justify-content: center;
+  margin-bottom: 20px;
+}
+.category {
+  background: #e1e4e8;
+  padding: 8px 14px;
+  border-radius: 6px;
+  cursor: pointer;
+}
+.subtags {
+  display: flex;
+  gap: 6px;
+  margin-top: 6px;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+.subtag {
+  background: #d1d5da;
+  padding: 6px 10px;
+  border-radius: 6px;
+  cursor: pointer;
+}
+.subtag.active {
+  background: #238636;
+  color: white;
+}
+.problem {
+  background: white;
+  padding: 12px;
+  border-radius: 8px;
+  margin-bottom: 8px;
+  box-shadow: 0 1px 2px #00000010;
+}
+.problem a {
+  text-decoration: none;
+  color: #0366d6;
+  font-weight: bold;
+}
