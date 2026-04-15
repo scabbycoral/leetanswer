@@ -71,25 +71,37 @@ window.addEventListener("DOMContentLoaded", async () => {
 
   // 显示小类
   function showSubtags(cat) {
-    let subtagsDiv = document.querySelector(".subtags");
-    if (!subtagsDiv) {
-      subtagsDiv = document.createElement("div");
-      subtagsDiv.className = "subtags";
-      container.insertBefore(subtagsDiv, noteContainer);
-    }
+	let subtagsDiv = document.querySelector(".subtags");
+	if (!subtagsDiv) {
+	subtagsDiv = document.createElement("div");
+	subtagsDiv.className = "subtags";
+	container.insertBefore(subtagsDiv, noteContainer);
+	}
 
-    subtagsDiv.innerHTML = "";
-    tagStructure[cat].forEach(sub => {
-      const btn = document.createElement("span");
-      btn.className = "subtag";
-      btn.innerText = sub;
-      btn.onclick = () => {
-        setActiveSubtag(btn);
-        filterByLeaf(sub);
-      };
-      subtagsDiv.appendChild(btn);
-    });
-    subtagsDiv.style.display = "flex";
+	subtagsDiv.innerHTML = "";
+	tagStructure[cat].forEach(sub => {
+	const btn = document.createElement("span");
+	btn.className = "subtag";
+	btn.innerText = sub;
+	btn.onclick = () => {
+	  // 清空所有高亮
+	  document.querySelectorAll(".subtag").forEach(s => s.classList.remove("active"));
+	  document.querySelectorAll(".category").forEach(c => c.classList.remove("active"));
+
+	  // 给当前小类 + 当前大类 同时亮
+	  btn.classList.add("active");
+
+	  // 找到当前大类并点亮（最稳写法）
+	  const allCats = document.querySelectorAll(".category");
+	  allCats.forEach(c => {
+		if (c.innerText == cat) c.classList.add("active");
+	  });
+
+	  filterByLeaf(sub);
+	};
+	subtagsDiv.appendChild(btn);
+	});
+	subtagsDiv.style.display = "flex";
   }
 
   // ✅ 核心：设置选中标签高亮
