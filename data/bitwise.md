@@ -4,19 +4,7 @@
 
 异或（XOR）核心特性：a ^ a = 0，a ^ 0 = a，可用于快速去重 Fig1
 
-与运算（AND）：a & 1 可判断奇偶性（1为奇数，0为偶数） Fig2 
-
-或运算（OR）：a | b 可用于置位（将指定位设为1） Fig3 
-
-## ## 经典应用 
-
-1. 寻找数组中唯一出现一次的数字（其他数字出现两次） Fig4 
-
-2. 不使用临时变量交换两个整数 Fig5 
-
-3. 计算一个数的二进制中1的个数（高效写法） Fig6 
-
-```cpp 
+```cpp
 // Fig1：异或核心性质示例 
 #include <iostream> 
 using namespace std; 
@@ -27,42 +15,195 @@ int main() {
 	return 0; 
 }
 ```
+
+hdawohodh
+
+dhiwaiodjoiajwd
+
+dhwoauhdoawd
+
+hdouiwahduaw
+
+hugehauo
+
+huiofwaho
+
+hugawh
+
+hoigwahgohwa
+
+hoawhgohawogh
+
+oghaowh
+
+与运算（AND）：a & 1 可判断奇偶性（1为奇数，0为偶数） Fig2 
+
 ```cpp
 
-// Fig2：与运算判断奇偶性 
+// Fig2：Codeforces 典型优化示例（快速读入，避免超时）
+#include <iostream>
+using namespace std;
 
-bool isOdd(int x) {    
-
-	return x & 1; // 1: 奇数，0: 偶数 
-
-}
-
-```
-
-```cpp
-// Fig3：或运算置位（将第3位设为1，从0开始计数）
-int setBit(int x) {
-    return x | (1 << 3); // 1<<3 是 8（二进制 1000）
-}
-```
-
-```cpp
-// Fig4：寻找唯一出现一次的数字
-int singleNumber(vector<int>& nums) {
-    int res = 0;
-    for (int x : nums) {
-        res ^= x; // 异或抵消，最终剩下唯一数
+// 快速读入模板（CF中大数据量必备）
+inline int read() {
+    int x = 0, f = 1;
+    char ch = getchar();
+    while (ch < '0' || ch > '9') {
+        if (ch == '-') f = -1;
+        ch = getchar();
     }
-    return res;
+    while (ch >= '0' && ch <= '9') {
+        x = x * 10 + ch - '0';
+        ch = getchar();
+    }
+    return x * f;
+}
+
+int main() {
+    int n = read();
+    int sum = 0;
+    for (int i = 0; i < n; i++) {
+        sum += read();
+    }
+    cout << sum << endl;
+    return 0;
 }
 ```
 
+dawhfhaoifhoiwahf
+
+fiawfjawjfgiwafa
+
+gioawghjiaoga
+
+
+
+owiaghjagw
+
+a
+
+wgiawgoha
+
+oghiwaogha
+
+wghiwagh
+
+aowgh
+
+
+
+或运算（OR）：a | b 可用于置位（将指定位设为1） Fig3 
+
 ```cpp
-// Fig5：不使用临时变量交换两个整数
-void swap(int &a, int &b) {
-    a ^= b;
-    b ^= a;
-    a ^= b;
+// Fig3：边界案例测试示例（数组为空）
+vector<int> getMin(vector<int>& nums) {
+    if (nums.empty()) { // 边界案例：空数组
+        return {};
+    }
+    int minVal = nums[0];
+    for (int x : nums) {
+        if (x < minVal) minVal = x;
+    }
+    return {minVal};
 }
 ```
+
+ghuaghuawg
+
+aghuwa
+
+ghawghwa
+
+ghua
+
+ogha
+
+ghawghawhogha
+
+oghuw
+
+ghawhoa
+
+
+
+## ## 经典应用 
+
+1. 寻找数组中唯一出现一次的数字（其他数字出现两次） Fig4 
+
+   ```cpp
+   // Fig4：极端值测试（int最大值）
+   #include <climits>
+   
+   int add(int a, int b) {
+       // 避免溢出（极端值案例）
+       if (b > 0 && a > INT_MAX - b) {
+           return INT_MAX; // 溢出处理
+       }
+       if (b < 0 && a < INT_MIN - b) {
+           return INT_MIN;
+       }
+       return a + b;
+   }
+   
+   ```
+
+   fhawofhaofh
+
+   awf
+
+   oawhf
+
+   owafhawf
+
+   hoahfoihwaf
+
+   oawfioh
+
+   aofhoafhu
+
+   iowahfaowiufh
+
+   awoh
+
+2. 不使用临时变量交换两个整数 Fig5 
+
+   ```cpp
+   // Fig5：时间复杂度优化（O(n^2) → O(n)）
+   // 原O(n^2)：寻找数组中两数之和等于target
+   // 优化后O(n)：用哈希表存储已遍历元素
+   vector<int> twoSum(vector<int>& nums, int target) {
+       unordered_map<int, int> mp;
+       for (int i = 0; i < nums.size(); i++) {
+           if (mp.count(target - nums[i])) {
+               return {mp[target - nums[i]], i};
+           }
+           mp[nums[i]] = i;
+       }
+       return {};
+   }
+   ```
+
+   fwahufhaw
+
+   faf
+
+   awfauwfhauowf
+
+   afhawhfoa
+
+   whfhwafo
+
+   awhfowafhoawfhu
+
+   awfhwau
+
+   fhaoufhafhwuo
+
+   a
+
+3. 计算一个数的二进制中1的个数（高效写法） Fig6 
+
+
+
+
 
