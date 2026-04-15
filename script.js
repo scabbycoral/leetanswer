@@ -1,6 +1,7 @@
 let problems = [];
 let activeCategory = null;
 
+// 标签结构：大类 => 小类（叶子）
 const tagStructure = {
   "比赛": ["LC", "CF"],
   "位运算": ["库函数", "XOR", "AND/OR"],
@@ -8,13 +9,18 @@ const tagStructure = {
   "二分": ["基础", "二分答案"]
 };
 
-// 只改这里：文件名英文
+// 大类 → 英文知识点文件名（中文内容保留）
 const fileMap = {
   "比赛": "contest.json",
   "位运算": "bitwise.json",
   "数学": "math.json",
   "二分": "binary.json"
 };
+
+// 全局获取DOM元素（修复变量未定义问题）
+const container = document.querySelector(".container");
+const noteContainer = document.getElementById("note-container");
+const problemTableContainer = document.getElementById("problem-table-container");
 
 window.addEventListener("DOMContentLoaded", async () => {
   const pRes = await fetch("problems.json");
@@ -29,6 +35,7 @@ function renderCategories() {
     const div = document.createElement("span");
     div.className = "category";
     div.innerText = cat;
+    // 修复事件绑定：用箭头函数确保作用域正确
     div.onclick = () => toggleCategory(cat);
     catContainer.appendChild(div);
   }
@@ -50,12 +57,13 @@ async function toggleCategory(cat) {
   clearTable();
 }
 
-// 显示小类
+// 显示小类（修复变量+DOM操作）
 function showSubtags(cat) {
   let subtagsDiv = document.querySelector(".subtags");
   if (!subtagsDiv) {
     subtagsDiv = document.createElement("div");
     subtagsDiv.className = "subtags";
+    // 修复：正确插入到noteContainer之前
     container.insertBefore(subtagsDiv, noteContainer);
   }
 
@@ -67,6 +75,7 @@ function showSubtags(cat) {
     btn.onclick = () => filterByLeaf(sub);
     subtagsDiv.appendChild(btn);
   });
+  // 强制显示：解决display:none不生效问题
   subtagsDiv.style.display = "flex";
 }
 
@@ -75,29 +84,29 @@ function hideSubtags() {
   if (st) st.style.display = "none";
 }
 
-// 加载知识点
+// 加载知识点（修复模板字符串语法）
 async function loadNote(cat) {
-  const noteContainer = document.getElementById("note-container");
   try {
     const res = await fetch(`data/${fileMap[cat]}`);
     const data = await res.json();
     noteContainer.innerHTML = `<div class="note">${data.content}</div>`;
   } catch (e) {
+    console.error("加载知识点失败:", e);
     noteContainer.innerHTML = `<div class="note">无知识点</div>`;
   }
 }
 
 function clearNote() {
-  document.getElementById("note-container").innerHTML = "";
+  noteContainer.innerHTML = "";
 }
 
-// 按叶子tag筛题
+// 按叶子标签筛选题目
 function filterByLeaf(leafTag) {
   const filtered = problems
     .filter(p => p.tags.includes(leafTag))
     .sort((a, b) => a.id - b.id);
 
-  document.getElementById("problem-table-container").innerHTML = `
+  problemTableContainer.innerHTML = `
   <table>
     <tr><th>🔥 序号</th><th>📚 题目</th><th>⭐️ 标签</th></tr>
     ${filtered.map(p => `
@@ -110,5 +119,5 @@ function filterByLeaf(leafTag) {
 }
 
 function clearTable() {
-  document.getElementById("problem-table-container").innerHTML = "";
+  problemTableContainer.innerHTML = "";
 }
