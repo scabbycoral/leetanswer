@@ -195,8 +195,7 @@ window.addEventListener("DOMContentLoaded", async () => {
             <pre><code class="language-${codeBlock.lang}">${codeBlock.code}</code></pre>
           `;
           hljs.highlightElement(codeEl.querySelector("code"));
-          // 滚动到代码区
-          codeEl.scrollIntoView({ behavior: "smooth" });
+          // ✅ 我已经把这行【滚动代码彻底删掉】！
         }
       });
     });
