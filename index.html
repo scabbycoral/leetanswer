@@ -3,230 +3,77 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>LeetCode 个人刷题进度</title>
+  <title>LC 题库</title>
   <style>
-    * { box-sizing: border-box; }
-    body { font-family: system-ui, -apple-system, sans-serif; background: #f6f8fa; margin: 0; padding: 20px; }
+    body { font-family: Arial; background: #f6f8fa; padding: 20px; }
     .container { max-width: 1000px; margin: 0 auto; }
-    h1 { text-align: center; color: #24292f; }
-    .filters { display: flex; gap: 8px; flex-wrap: wrap; justify-content: center; margin: 16px 0; }
-    .btn { padding: 8px 12px; border: none; border-radius: 6px; cursor: pointer; background: #e1e4e8; transition: background 0.2s; }
+    h1 { text-align: center; }
+    .filters { display: flex; gap: 8px; flex-wrap: wrap; justify-content: center; margin: 20px 0; }
+    .btn { padding: 8px 14px; border: none; border-radius: 6px; background: #e1e4e8; cursor: pointer; }
     .btn.active { background: #238636; color: white; }
-    .btn:hover:not(.active) { background: #d1d5da; }
-    .problem { background: white; padding: 12px 16px; border-radius: 8px; margin-bottom: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); display: flex; justify-content: space-between; align-items: center; }
-    .title { font-weight: 600; color: #24292f; }
-    .status { font-size: 16px; margin-left: 8px; }
-    .loading { text-align: center; font-size: 18px; color: #6a737d; padding: 40px 0; }
-    .error { text-align: center; color: #cf222e; padding: 40px 0; }
+    .problem { background: white; padding: 12px; border-radius: 8px; margin-bottom: 8px; box-shadow: 0 1px 2px #00000010; }
   </style>
 </head>
 <body>
 <div class="container">
-  <h1>LeetCode 个人刷题进度</h1>
+  <h1>LC 题库（本地标记版）</h1>
   <div class="filters">
-    <button class="btn active" onclick="setFilter('all')">全部题目</button>
-    <button class="btn" onclick="setFilter('done')">已做</button>
-    <button class="btn" onclick="setFilter('undone')">未做</button>
+    <button class="btn active" onclick="showAll()">全部</button>
+    <button class="btn" onclick="showDone()">已做</button>
+    <button class="btn" onclick="showUndone()">未做</button>
   </div>
-  <div id="tags" class="filters"></div>
-  <div id="list" class="loading">加载中...</div>
+  <div id="list"></div>
 </div>
 
 <script>
-// ====================== 只需要改这里：填你的 LeetCode 用户名 ======================
-const LEETCODE_USERNAME = "scubcoral";
-// ==============================================================================
+// ========================== 你自己在这里标记题目 ==========================
+const problems = [
+  { id: 1, title: "两数之和", tag: "哈希", done: true },
+  { id: 704, title: "二分查找", tag: "二分", done: false },
+  { id: 136, title: "只出现一次的数字", tag: "位运算", done: true },
+  { id: 461, title: "汉明距离", tag: "位运算", done: false },
+];
+// ======================================================================
 
-let allProblems = [];
-let currentFilter = "all";
+let currentList = problems;
 
-// LeetCode 官方 GraphQL 接口（公开可访问，无跨域）
-const GRAPHQL_URL = "https://leetcode.cn/graphql/";
-
-// 1. 获取用户已AC题目
-async function fetchUserSolved() {
-  const query = `
-    query userProfile($username: String!) {
-      userProfile(username: $username) {
-        submissionCalendar
-        solvedProblemCount
-        acQuestionCount
-        acSubmissionCount
-        totalSubmissionCount
-        recentSubmissionList {
-          title
-          statusDisplay
-          lang
-          timestamp
-        }
-      }
-      userSolveCountByDifficulty {
-        difficulty
-        count
-      }
-    }
-  `;
-  const variables = { username: LEETCODE_USERNAME };
-
-  const res = await fetch(GRAPHQL_URL, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ query, variables })
-  });
-  const data = await res.json();
-  
-  if (!data.data?.userProfile) throw new Error("用户名错误或接口异常");
-  
-  // 2. 获取全量题目列表
-  const allProblemsQuery = `
-    query problemsetQuestionList($categorySlug: String, $limit: Int, $skip: Int, $filters: QuestionListFilterInput) {
-      problemsetQuestionList(
-        categorySlug: $categorySlug
-        limit: $limit
-        skip: $skip
-        filters: $filters
-      ) {
-        total
-        questions {
-          questionId
-          title
-          titleSlug
-          difficulty
-          topicTags {
-            name
-            slug
-          }
-        }
-      }
-    }
-  `;
-  const allRes = await fetch(GRAPHQL_URL, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({
-      query: allProblemsQuery,
-      variables: { categorySlug: "", limit: 4000, skip: 0, filters: {} }
-    })
-  });
-  const allData = await allRes.json();
-  const allQuestions = allData.data.problemsetQuestionList.questions;
-
-  // 3. 获取用户已AC的题目ID集合
-  const solvedQuery = `
-    query userAcQuestions($username: String!) {
-      userAcQuestions(username: $username) {
-        questionId
-      }
-    }
-  `;
-  const solvedRes = await fetch(GRAPHQL_URL, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ query: solvedQuery, variables: { username: LEETCODE_USERNAME } })
-  });
-  const solvedData = await solvedRes.json();
-  const solvedIds = new Set(solvedData.data.userAcQuestions.map(q => q.questionId));
-
-  // 4. 合并数据，标记已做/未做
-  allProblems = allQuestions.map(q => ({
-    id: q.questionId,
-    title: q.title,
-    slug: q.titleSlug,
-    difficulty: q.difficulty,
-    tags: q.topicTags.map(t => t.name),
-    done: solvedIds.has(q.questionId)
-  }));
-
-  render();
-  buildTags();
-}
-
-// 渲染题目列表
 function render() {
-  const listEl = document.getElementById("list");
-  let filtered = allProblems;
-  
-  if (currentFilter === "done") filtered = allProblems.filter(p => p.done);
-  if (currentFilter === "undone") filtered = allProblems.filter(p => !p.done);
-
-  if (filtered.length === 0) {
-    listEl.innerHTML = `<div class="loading">暂无符合条件的题目</div>`;
-    return;
-  }
-
-  listEl.innerHTML = "";
-  filtered.forEach(p => {
+  const dom = document.getElementById("list");
+  dom.innerHTML = "";
+  currentList.forEach(p => {
     const div = document.createElement("div");
     div.className = "problem";
-    div.innerHTML = `
-      <div>
-        <span class="title">${p.id}. ${p.title}</span>
-        <span style="color:#6a737d; font-size:12px; margin-left:8px;">${p.difficulty}</span>
-      </div>
-      <div>
-        <span class="status">${p.done ? "✅" : "❌"}</span>
-      </div>
-    `;
-    listEl.appendChild(div);
+    div.innerHTML = `<strong>${p.id}. ${p.title}</strong> [${p.tag}] <span>${p.done ? "✅ 已做" : "❌ 未做"}</span>`;
+    dom.appendChild(div);
   });
 }
 
-// 构建标签筛选
-function buildTags() {
-  const tagsEl = document.getElementById("tags");
-  const allTags = new Set();
-  allProblems.forEach(p => p.tags.forEach(t => allTags.add(t)));
-  
-  tagsEl.innerHTML = "";
-  Array.from(allTags).sort().forEach(tag => {
-    const btn = document.createElement("button");
-    btn.className = "btn";
-    btn.innerText = tag;
-    btn.onclick = () => filterByTag(tag);
-    tagsEl.appendChild(btn);
-  });
-}
-
-// 按标签筛选
-function filterByTag(tag) {
-  const filtered = allProblems.filter(p => p.tags.includes(tag));
-  const listEl = document.getElementById("list");
-  listEl.innerHTML = "";
-  filtered.forEach(p => {
-    const div = document.createElement("div");
-    div.className = "problem";
-    div.innerHTML = `
-      <div>
-        <span class="title">${p.id}. ${p.title}</span>
-        <span style="color:#6a737d; font-size:12px; margin-left:8px;">${p.difficulty}</span>
-      </div>
-      <div>
-        <span class="status">${p.done ? "✅" : "❌"}</span>
-      </div>
-    `;
-    listEl.appendChild(div);
-  });
-  // 重置按钮高亮
-  document.querySelectorAll(".filters .btn").forEach(btn => btn.classList.remove("active"));
-}
-
-// 切换状态筛选
-function setFilter(type) {
-  currentFilter = type;
-  document.querySelectorAll(".filters .btn").forEach(btn => {
-    btn.classList.toggle("active", 
-      (type === "all" && btn.innerText === "全部题目") ||
-      (type === "done" && btn.innerText === "已做") ||
-      (type === "undone" && btn.innerText === "未做")
-    );
-  });
+function showAll() {
+  currentList = problems;
   render();
+  setActive("全部");
 }
 
-// 初始化
-fetchUserSolved().catch(err => {
-  document.getElementById("list").innerHTML = `<div class="error">加载失败：${err.message}，请检查用户名是否正确</div>`;
-});
+function showDone() {
+  currentList = problems.filter(p => p.done);
+  render();
+  setActive("已做");
+}
+
+function showUndone() {
+  currentList = problems.filter(p => !p.done);
+  render();
+  setActive("未做");
+}
+
+function setActive(text) {
+  document.querySelectorAll(".btn").forEach(btn => {
+    btn.classList.remove("active");
+    if (btn.innerText === text) btn.classList.add("active");
+  });
+}
+
+render();
 </script>
 </body>
 </html>
