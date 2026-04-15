@@ -3,77 +3,16 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>LC 题库</title>
-  <style>
-    body { font-family: Arial; background: #f6f8fa; padding: 20px; }
-    .container { max-width: 1000px; margin: 0 auto; }
-    h1 { text-align: center; }
-    .filters { display: flex; gap: 8px; flex-wrap: wrap; justify-content: center; margin: 20px 0; }
-    .btn { padding: 8px 14px; border: none; border-radius: 6px; background: #e1e4e8; cursor: pointer; }
-    .btn.active { background: #238636; color: white; }
-    .problem { background: white; padding: 12px; border-radius: 8px; margin-bottom: 8px; box-shadow: 0 1px 2px #00000010; }
-  </style>
+  <title>算法题库</title>
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
-<div class="container">
-  <h1>LC 题库（本地标记版）</h1>
-  <div class="filters">
-    <button class="btn active" onclick="showAll()">全部</button>
-    <button class="btn" onclick="showDone()">已做</button>
-    <button class="btn" onclick="showUndone()">未做</button>
+  <div class="container">
+    <h1>算法题库</h1>
+    <div id="tag-container"></div>
+    <div id="problem-list"></div>
   </div>
-  <div id="list"></div>
-</div>
 
-<script>
-// ========================== 你自己在这里标记题目 ==========================
-const problems = [
-  { id: 1, title: "两数之和", tag: "哈希", done: true },
-  { id: 704, title: "二分查找", tag: "二分", done: false },
-  { id: 136, title: "只出现一次的数字", tag: "位运算", done: true },
-  { id: 461, title: "汉明距离", tag: "位运算", done: false },
-];
-// ======================================================================
-
-let currentList = problems;
-
-function render() {
-  const dom = document.getElementById("list");
-  dom.innerHTML = "";
-  currentList.forEach(p => {
-    const div = document.createElement("div");
-    div.className = "problem";
-    div.innerHTML = `<strong>${p.id}. ${p.title}</strong> [${p.tag}] <span>${p.done ? "✅ 已做" : "❌ 未做"}</span>`;
-    dom.appendChild(div);
-  });
-}
-
-function showAll() {
-  currentList = problems;
-  render();
-  setActive("全部");
-}
-
-function showDone() {
-  currentList = problems.filter(p => p.done);
-  render();
-  setActive("已做");
-}
-
-function showUndone() {
-  currentList = problems.filter(p => !p.done);
-  render();
-  setActive("未做");
-}
-
-function setActive(text) {
-  document.querySelectorAll(".btn").forEach(btn => {
-    btn.classList.remove("active");
-    if (btn.innerText === text) btn.classList.add("active");
-  });
-}
-
-render();
-</script>
+  <script src="script.js"></script>
 </body>
 </html>
