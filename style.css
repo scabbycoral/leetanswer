@@ -154,3 +154,26 @@ a {
   color: #0969da;
   text-decoration: none;
 }
+/* 右侧代码面板固定在当前视口，不滚动 */
+.note-content {
+  display: flex;
+  position: relative;
+}
+.note-text {
+  flex: 1;
+  padding-right: 320px; /* 给右侧代码留位置 */
+}
+.note-code {
+  position: fixed;       /* 核心：固定在屏幕，不随页面滚动 */
+  top: 120px;            /* 距离顶部高度（按你页面调） */
+  right: 20px;           /* 贴右边 */
+  width: 300px;          /* 代码区宽度 */
+  max-height: 70vh;      /* 最大高度70%屏幕 */
+  overflow-y: auto;      /* 代码长了内部滚动 */
+  background: #1e1e1e;
+  color: #ddd;
+  padding: 12px 16px;
+  border-radius: 8px;
+  box-shadow: 0 0 12px rgba(0,0,0,0.3);
+  z-index: 100;
+}
