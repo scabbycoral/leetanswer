@@ -1,54 +1,88 @@
 body {
-  font-family: Arial;
-  background: #f6f8fa;
+  font-family: 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+  background: #ffffff;
+  color: #24292f;
   padding: 20px;
+  margin: 0;
 }
 .container {
-  max-width: 1000px;
+  max-width: 1200px;
   margin: 0 auto;
 }
+
 h1 {
   text-align: center;
+  margin-bottom: 24px;
+  color: #24292f;
 }
-#tag-container {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 10px;
-  justify-content: center;
-  margin-bottom: 20px;
-}
+
+/* 大类按钮 */
 .category {
-  background: #e1e4e8;
-  padding: 8px 14px;
-  border-radius: 6px;
+  background: #f6f8fa;
+  border: 1px solid #d1d9e0;
+  padding: 10px 16px;
+  margin: 8px;
+  border-radius: 8px;
   cursor: pointer;
+  text-align: center;
+  font-weight: 500;
 }
+.category:hover {
+  background: #e9ecef;
+}
+
+/* 小标签 */
 .subtags {
-  display: flex;
-  gap: 6px;
-  margin-top: 6px;
+  display: none;
+  margin: 10px 0;
   justify-content: center;
   flex-wrap: wrap;
+  gap: 8px;
 }
 .subtag {
-  background: #d1d5da;
-  padding: 6px 10px;
+  background: #ffffff;
+  padding: 6px 12px;
   border-radius: 6px;
   cursor: pointer;
+  border: 1px solid #d1d9e0;
 }
-.subtag.active {
-  background: #238636;
-  color: white;
+.subtag:hover {
+  background: #f0f4f8;
+  border-color: #adb5bd;
 }
-.problem {
-  background: white;
-  padding: 12px;
+
+/* 知识点笔记 */
+.note {
+  background: #f8f9fa;
+  padding: 14px 18px;
+  margin: 14px 0;
   border-radius: 8px;
-  margin-bottom: 8px;
-  box-shadow: 0 1px 2px #00000010;
+  border-left: 4px solid #238636;
+  white-space: pre-wrap;
+  display: none;
 }
-.problem a {
+
+/* 表格 */
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 20px;
+  background: #ffffff;
+}
+th, td {
+  border: 1px solid #d1d9e0;
+  padding: 12px;
+  text-align: center;
+}
+th {
+  background: #f6f8fa;
+  font-weight: 600;
+}
+
+a {
+  color: #0969da;
   text-decoration: none;
-  color: #0366d6;
-  font-weight: bold;
+}
+a:hover {
+  text-decoration: underline;
 }
