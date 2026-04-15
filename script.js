@@ -1,6 +1,7 @@
 let problems = [];
 let activeCategory = null;
 let currentNoteContent = "";
+let activeSubtag = null; // 追踪当前选中的小标签
 
 const tagStructure = {
   "比赛": ["LC", "CF"],
@@ -23,7 +24,7 @@ window.addEventListener("DOMContentLoaded", async () => {
   const catContainer = document.getElementById("categories");
   const searchInput = document.getElementById("search-input");
 
-  // 搜索功能
+  // 搜索知识点
   searchInput.addEventListener("input", (e) => {
     const keyword = e.target.value.toLowerCase();
     if (!currentNoteContent) return;
@@ -57,10 +58,12 @@ window.addEventListener("DOMContentLoaded", async () => {
       hideSubtags();
       noteContainer.innerHTML = "";
       clearTable();
+      activeSubtag = null;
       return;
     }
 
     activeCategory = cat;
+    activeSubtag = null;
     showSubtags(cat);
     await loadNote(cat);
     clearTable();
@@ -80,10 +83,20 @@ window.addEventListener("DOMContentLoaded", async () => {
       const btn = document.createElement("span");
       btn.className = "subtag";
       btn.innerText = sub;
-      btn.onclick = () => filterByLeaf(sub);
+      btn.onclick = () => {
+        setActiveSubtag(btn);
+        filterByLeaf(sub);
+      };
       subtagsDiv.appendChild(btn);
     });
     subtagsDiv.style.display = "flex";
+  }
+
+  // ✅ 核心：设置选中标签高亮
+  function setActiveSubtag(btn) {
+    document.querySelectorAll(".subtag").forEach(s => s.classList.remove("active"));
+    btn.classList.add("active");
+    activeSubtag = btn.innerText;
   }
 
   function hideSubtags() {
@@ -91,7 +104,7 @@ window.addEventListener("DOMContentLoaded", async () => {
     if (st) st.style.display = "none";
   }
 
-  // 加载 MD 知识点（默认折叠）
+  // 加载 MD 知识点
   async function loadNote(cat) {
     try {
       const res = await fetch(`data/${fileMap[cat]}`);
