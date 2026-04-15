@@ -105,3 +105,8 @@ a {
   color: #0969da;
   text-decoration: none;
 }
+.subtag.active {
+  background-color: #238636 !important;
+  color: white !important;
+  border-color: #238636 !important;
+}
