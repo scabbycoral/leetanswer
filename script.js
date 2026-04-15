@@ -12,7 +12,7 @@ const tagStructure = {
 
 // 加载 JSON（性能最高）
 window.addEventListener("DOMContentLoaded", async () => {
-  const res = await fetch("data/problems.json");
+  const res = await fetch("problems.json");
   allProblems = await res.json();
   renderTags();
 });
