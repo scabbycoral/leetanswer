@@ -25,6 +25,19 @@ marked.setOptions({
   breaks: true
 });
 
+// ========== 公式渲染函数 ==========
+function renderMath() {
+  if (window.renderMathInElement) {
+    renderMathInElement(document.body, {
+      delimiters: [
+        { left: "$", right: "$", display: false },
+        { left: "$$", right: "$$", display: true }
+      ],
+      throwOnError: false
+    });
+  }
+}
+
 window.addEventListener("DOMContentLoaded", async () => {
   const container = document.querySelector(".container");
   const noteContainer = document.getElementById("note-container");
@@ -43,6 +56,7 @@ window.addEventListener("DOMContentLoaded", async () => {
     }
     textEl.innerHTML = html;
     hljs.highlightAll();
+    renderMath(); // 搜索后也渲染公式
   });
 
   try { const pRes = await fetch("problems.json"); problems = await pRes.json(); } catch (e) {}
@@ -117,6 +131,9 @@ window.addEventListener("DOMContentLoaded", async () => {
     textEl.innerHTML = marked.parse(processed);
     codeEl.innerHTML = "<p>点击左侧 Fig 查看代码</p>";
 
+    // ========== 渲染公式 ==========
+    renderMath();
+
     document.querySelectorAll(".fig-link").forEach((link, i) => {
       link.addEventListener("click", () => {
         const id = link.dataset.fig;
@@ -124,8 +141,7 @@ window.addEventListener("DOMContentLoaded", async () => {
         if (block) {
           codeEl.innerHTML = marked.parse(block.code);
           hljs.highlightAll();
-
-          // ✅ 核心：右边代码栏 同步左边滚动位置
+          renderMath(); // 代码里也渲染公式
           setTimeout(() => {
             const codeNodes = codeEl.querySelectorAll("pre");
             if (codeNodes[i]) codeNodes[i].scrollIntoView({ behavior: "smooth", block: "start" });
@@ -145,6 +161,7 @@ window.addEventListener("DOMContentLoaded", async () => {
     } else {
       content.style.display = "flex";
       btn.textContent = "📕 收起知识点";
+      renderMath(); // 展开时重新渲染公式（最关键！）
     }
   };
 
@@ -158,8 +175,7 @@ window.addEventListener("DOMContentLoaded", async () => {
         <td>${p.id}</td>
         <td><a href="${p.url}" target="_blank">${p.title}</a></td>
         <td>${p.tags.join(", ")}</td>
-      </tr>`).join("")}
-    </table>`;
+      </tr>`).join("")}`;
   }
 
   function clearTable() { problemTableContainer.innerHTML = ""; }

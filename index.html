@@ -6,18 +6,14 @@
   <title>算法题库</title>
   <link rel="stylesheet" href="style.css">
 
-  <!-- Markdown 渲染 -->
   <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
-
-  <!-- 代码高亮 -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github.min.css">
   <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
 
-  <!-- ========== 新加：公式渲染 KaTeX（国内可用） ========== -->
+  <!-- KaTeX 公式渲染 -->
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
   <script src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"></script>
-
 </head>
 <body>
   <div class="container">
@@ -31,17 +27,5 @@
   </div>
 
   <script src="script.js"></script>
-
-  <!-- ========== 新加：启动公式渲染 ========== -->
-  <script>
-    document.addEventListener("DOMContentLoaded", function () {
-      renderMathInElement(document.body, {
-        delimiters: [
-          { left: "$", right: "$", display: false },
-          { left: "$$", right: "$$", display: true }
-        ]
-      });
-    });
-  </script>
 </body>
 </html>
