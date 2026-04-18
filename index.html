@@ -5,11 +5,19 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>算法题库</title>
   <link rel="stylesheet" href="style.css">
-  <!-- 引入marked.js 实现Markdown渲染 + 代码高亮 -->
+
+  <!-- Markdown 渲染 -->
   <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+
+  <!-- 代码高亮 -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github.min.css">
   <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
-  <script>hljs.highlightAll();</script>
+
+  <!-- ========== 新加：公式渲染 KaTeX（国内可用） ========== -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+  <script src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"></script>
+
 </head>
 <body>
   <div class="container">
@@ -21,6 +29,19 @@
     <div id="note-container"></div>
     <div id="problem-table-container"></div>
   </div>
+
   <script src="script.js"></script>
+
+  <!-- ========== 新加：启动公式渲染 ========== -->
+  <script>
+    document.addEventListener("DOMContentLoaded", function () {
+      renderMathInElement(document.body, {
+        delimiters: [
+          { left: "$", right: "$", display: false },
+          { left: "$$", right: "$$", display: true }
+        ]
+      });
+    });
+  </script>
 </body>
 </html>
